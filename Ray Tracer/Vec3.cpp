@@ -1,0 +1,45 @@
+//
+//  Vec3.cpp
+//  Ray Tracer
+//
+//  Created by Ang Li on 11/1/13.
+//  Copyright (c) 2013 Ang Li. All rights reserved.
+//
+
+#include "Vec3.h"
+
+Vec3::Vec3(float x, float y, float z){
+    elements[0]=x;
+    elements[1]=y;
+    elements[2]=z;
+}
+
+Vec3::~Vec3(){
+    //empty destructor
+}
+
+float Vec3::getElement(int index){
+    return elements[index];
+}
+
+
+Vec3 Vec3::add(Vec3 v){
+    return Vec3(getElement(0)+v.getElement(0),
+                getElement(1)+v.getElement(1),
+                getElement(2)+v.getElement(2));
+}
+
+Vec3 Vec3::diff(Vec3 v){
+    return Vec3(getElement(0)-v.getElement(0),
+                getElement(1)-v.getElement(1),
+                getElement(2)-v.getElement(2));
+}
+
+float Vec3::dot(Vec3 v){
+    return getElement(0)*v.getElement(0)+getElement(1)*v.getElement(1)+getElement(2)*v.getElement(2);
+}
+
+Vec3 Vec3::cross(Vec3 v){
+    //haven't implemented yet
+    return Vec3(0,0,0);
+}
