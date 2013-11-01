@@ -35,11 +35,25 @@ Vec3 Vec3::diff(Vec3 v){
                 getElement(2)-v.getElement(2));
 }
 
+Vec3 Vec3::times(float multiplier){
+    return Vec3(getElement(0)*multiplier,
+                getElement(1)*multiplier,
+                getElement(2)*multiplier);
+}
+
 float Vec3::dot(Vec3 v){
     return getElement(0)*v.getElement(0)+getElement(1)*v.getElement(1)+getElement(2)*v.getElement(2);
+}
+
+Vec3 Vec3::unit(){
+    return Vec3(getElement(0), getElement(1), getElement(2)).times(1/length());
 }
 
 Vec3 Vec3::cross(Vec3 v){
     //haven't implemented yet
     return Vec3(0,0,0);
+}
+
+float Vec3::length(){
+    return sqrt(getElement(0)*getElement(0)+getElement(1)*getElement(1)+getElement(2)*getElement(2));
 }

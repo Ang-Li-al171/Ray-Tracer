@@ -26,6 +26,14 @@ RayTracer::~RayTracer(){
 
 void RayTracer::render(int objName){
     // ray tracing a sphere center at (0, 0, -100) with radius 100
+    
+    // light source position Vec3
+    
+    Vec3 lightS = Vec3(100, 100, 50);
+    float Reflec = 1.0;
+    Vec3 E = Vec3(100, 100, 255);
+    float Ambient = 0.3;
+    
     if (objName == 1){
         // orthographical camera with 100*100 pixels
         // from (0,0,0) to (99,99,0)
@@ -45,9 +53,26 @@ void RayTracer::render(int objName){
                 float D = powf(d.dot(o.diff(c)), 2)-(d.dot(d)*(o.diff(c).dot(o.diff(c))-R*R));
                 if (D>0){
                     // hit the sphere
-                    image[i][j][0]=((float) i)/((float) height);
-                    image[i][j][1]=((float) j)/((float) width);
-                    image[i][j][2]=((float) i+j)/((float) width+height);
+                    
+                    float t = (-d.dot(o.diff(c))-sqrt(D))/d.dot(d);
+                    if (t<0)
+                        t = (-d.dot(o.diff(c))+sqrt(D))/d.dot(d);
+                    
+                    Vec3 hitP = o.add(d.times(t));
+                    Vec3 l = lightS.diff(hitP);
+                    Vec3 n = hitP.diff(c);
+                    
+                    Vec3 L = E.times(Reflec).times(n.unit().dot(l.unit()));
+                    //Vec3 e = d.times(-1).times(1/d.length());
+                    printf("%f %f %f\n", L.getElement(0), L.getElement(1), L.getElement(2));
+                    image[i][j][0] = (L.getElement(0)/255>0?L.getElement(0)/255:0) + E.times(Ambient).getElement(0)/255;
+                    image[i][j][1] = (L.getElement(1)/255>0?L.getElement(1)/255:0) + E.times(Ambient).getElement(1)/255;
+                    image[i][j][2] = (L.getElement(2)/255>0?L.getElement(2)/255:0) + E.times(Ambient).getElement(2)/255;
+                    
+//                    image[i][j][0]=((float) i)/((float) height);
+//                    image[i][j][1]=((float) j)/((float) width);
+//                    image[i][j][2]=((float) i+j)/((float) width+height);
+                    
                 }
             }
         }
