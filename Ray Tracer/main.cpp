@@ -91,7 +91,7 @@ int main(int argc, char * argv[])
     RayTracer trial1 = RayTracer();
     trial1.render(1);
     
-    ImageIO * the_image = new ImageIO("/Users/angli/Documents/CS-344/Ray Tracer/Ray Tracer/testTraceSphere.ppm");
+    ImageIO * the_image = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/Ray Tracer/testTraceSphere.ppm");
     current_image = the_image;
     
     win_height = current_image->getHeight();

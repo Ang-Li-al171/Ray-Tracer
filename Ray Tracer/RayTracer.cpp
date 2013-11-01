@@ -77,7 +77,7 @@ void RayTracer::render(int objName){
             }
         }
         
-        myImage->writeImage("/Users/angli/Documents/CS-344/Ray Tracer/Ray Tracer/testTraceSphere.ppm");
+        myImage->writeImage("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/Ray Tracer/testTraceSphere.ppm");
     }
 }
 
