@@ -24,11 +24,9 @@ RayTracer::~RayTracer(){
     delete myImage;
 }
 
-void RayTracer::render(int objName){
+void RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     
-    ImageIO * texture = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/Ray Tracer/checkerboard_red.ppm");
     float*** texture_image = texture->getImage();
-
     
     // ray tracing a sphere center at (0, 0, -100) with radius 100
     
@@ -38,7 +36,7 @@ void RayTracer::render(int objName){
     float Reflec = 1.0;
     Vec3 E = Vec3(100, 100, 255);
     float Ambient = 0.3;
-
+    
     // define a plane parallel to x-z plane
     
     Vec3 planeA = Vec3(0, -200, 0);
@@ -83,32 +81,31 @@ void RayTracer::render(int objName){
                     
                     Vec3 normalizedN = n.unit();
                     
-                    Vec3 reflection = d.diff(normalizedN.times(2).times(d.dot(normalizedN)));
+                    Vec3 reflectedRay = d.diff(normalizedN.times(2).times(d.dot(normalizedN)));
                     
-                    if (reflection.dot(planeN) != 0) {
-                        float reflectionT = ((planeA.diff(hitP).dot(planeN))/(reflection.dot(planeN)));
-                        if (reflectionT > 0) {
-                            Vec3 planeHitP = hitP.add(reflection.times(t));
+                    if (reflectedRay.dot(planeN) != 0) {
+                        float tForPlaneHit = ((planeA.diff(hitP).dot(planeN))/(reflectedRay.dot(planeN)));
+                        if (tForPlaneHit > 0) {
+                            Vec3 planeHitP = hitP.add(reflectedRay.times(tForPlaneHit));
                             
                             int x = fabs(planeHitP.getElement(0));
-                            x = x%288;
                             int y = fabs(planeHitP.getElement(2));
-                            y = y%288;
                             
-                            image[i][j][0] = image[i][j][0]*0.95 + texture_image[x][y][0]*0.05;
-                            image[i][j][1] = image[i][j][1]*0.95 + texture_image[x][y][1]*0.05;
-                            image[i][j][2] = image[i][j][2]*0.95 + texture_image[x][y][2]*0.05;
-
+                            if (x < 288*2 && y < 288*2){
+                                x = x%288;
+                                y = y%288;
+                                
+                                image[i][j][0] = image[i][j][0]*0.90 + texture_image[x][y][0]*0.10;
+                                image[i][j][1] = image[i][j][1]*0.90 + texture_image[x][y][1]*0.10;
+                                image[i][j][2] = image[i][j][2]*0.90 + texture_image[x][y][2]*0.10;
+                            }
                         }
-                        
                     }
-
-                    
                 }
             }
         }
         
-        myImage->writeImage("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/Ray Tracer/testTraceSphere.ppm");
+        myImage->writeImage(filePath);
     }
 }
 

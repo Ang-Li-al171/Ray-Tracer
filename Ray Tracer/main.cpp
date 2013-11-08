@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Ang Li. All rights reserved.
 //
 
-
+#include <unistd.h>
 #include <iostream>
 #include <math.h>
 #include "ImageIO.h"
@@ -86,14 +86,23 @@ void keyboard( unsigned char key, int x, int y ) {
     }
 }
 
+const char* appendWithCWD(const char* fileName){
+    char buffer[200];
+    std::cout << "Current directory is: " << getcwd( buffer, 200) << "\n";
+    std::string file = std::string(buffer) + fileName;
+    const char * filePath = file.c_str();
+    return filePath;
+}
+
 int main(int argc, char * argv[])
 {
     
+    ImageIO * texture = new ImageIO(appendWithCWD("/checkerboard_red.ppm"));
     
     RayTracer trial1 = RayTracer();
-    trial1.render(1);
+    trial1.render(1, appendWithCWD("/testTraceSphere.ppm"), texture);
     
-    ImageIO * the_image = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/Ray Tracer/testTraceSphere.ppm");
+    ImageIO * the_image = new ImageIO(appendWithCWD("/testTraceSphere.ppm"));
     current_image = the_image;
     
     win_height = current_image->getHeight();

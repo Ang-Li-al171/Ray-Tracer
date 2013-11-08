@@ -43,12 +43,10 @@
 		BCB12DD31823636700C0B07F /* filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filter.h; sourceTree = "<group>"; };
 		BCB12DD41823636700C0B07F /* ImageIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageIO.cpp; sourceTree = "<group>"; };
 		BCB12DD51823636700C0B07F /* ImageIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageIO.h; sourceTree = "<group>"; };
-		BCB12DD81823645500C0B07F /* duke.ppm */ = {isa = PBXFileReference; lastKnownFileType = text; path = duke.ppm; sourceTree = "<group>"; };
 		BCB12DD9182364DA00C0B07F /* RayTracer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RayTracer.cpp; sourceTree = "<group>"; };
 		BCB12DDA182364DA00C0B07F /* RayTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RayTracer.h; sourceTree = "<group>"; };
 		BCB12DDC182368EF00C0B07F /* Vec3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vec3.cpp; sourceTree = "<group>"; };
 		BCB12DDD182368EF00C0B07F /* Vec3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vec3.h; sourceTree = "<group>"; };
-		BCB12DDF1823717200C0B07F /* testTraceSphere.ppm */ = {isa = PBXFileReference; lastKnownFileType = text; path = testTraceSphere.ppm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,8 +83,6 @@
 		BCB12DC118235EAC00C0B07F /* Ray Tracer */ = {
 			isa = PBXGroup;
 			children = (
-				BCB12DDF1823717200C0B07F /* testTraceSphere.ppm */,
-				BCB12DD81823645500C0B07F /* duke.ppm */,
 				BCB12DD21823636700C0B07F /* filter.cpp */,
 				BCB12DD31823636700C0B07F /* filter.h */,
 				BCB12DD41823636700C0B07F /* ImageIO.cpp */,
@@ -258,6 +254,7 @@
 				BCB12DCA18235EAC00C0B07F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

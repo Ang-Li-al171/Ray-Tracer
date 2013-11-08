@@ -21,7 +21,7 @@ class RayTracer{
 public:
     RayTracer();
     ~RayTracer(void);
-    void render(int objType);
+    void render(int objType, const char* filePath, ImageIO* texture);
     int getWidth();
     int getHeight();
     float*** getImage();
