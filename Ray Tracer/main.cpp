@@ -88,7 +88,7 @@ void keyboard( unsigned char key, int x, int y ) {
 
 const char* appendWithCWD(const char* fileName){
     char buffer[200];
-    std::cout << "Current directory is: " << getcwd( buffer, 200) << "\n";
+    getcwd( buffer, 200);
     std::string file = std::string(buffer) + fileName;
     const char * filePath = file.c_str();
     return filePath;

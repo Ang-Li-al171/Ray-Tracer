@@ -12,7 +12,6 @@
 #include <iostream>
 #include "ImageIO.h"
 #include "RTMath.h"
-#include <math.h>
 //#include <GLUT/glut.h>
 
 using namespace std;
@@ -21,7 +20,7 @@ class RayTracer{
 public:
     RayTracer();
     ~RayTracer(void);
-    void render(int objType, const char* filePath, ImageIO* texture);
+    bool render(int objType, const char* filePath, ImageIO* texture);
     int getWidth();
     int getHeight();
     float*** getImage();

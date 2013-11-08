@@ -9,7 +9,7 @@
 #include "RayTracer.h"
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <math.h>
 #include <GLUT/glut.h>
 
 RayTracer::RayTracer(){
@@ -24,7 +24,7 @@ RayTracer::~RayTracer(){
     delete myImage;
 }
 
-void RayTracer::render(int objName, const char* filePath, ImageIO* texture){
+bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     
     float*** texture_image = texture->getImage();
     
@@ -32,57 +32,61 @@ void RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     
     // light source position Vec3
     
-    Vec3 lightS = Vec3(100, 100, 50);
-    float Reflec = 1.0;
+    Vec3 lightS = Vec3(100, 50, 50);
     Vec3 E = Vec3(100, 100, 255);
+    Vec3 White = Vec3(255, 255, 255);
+    float Diffuse = 1.0;
     float Ambient = 0.3;
+    float Specular = 0.8;
     
     // define a plane parallel to x-z plane
     
     Vec3 planeA = Vec3(0, -200, 0);
     Vec3 planeN = Vec3(0, 1, 0);
     
+    float*** image = myImage->getImage();
     
     if (objName == 1){
         // orthographical camera with 100*100 pixels
-        // from (0,0,0) to (99,99,0)
-        // shoot a ray in (0,0,-1) direction from each of the pixels
+        // shoot a ray in d=(0,0,-1) direction from each of the pixels
         
         float R = 100;
         Vec3 c = Vec3(0, 0, -100);
         Vec3 d = Vec3(0, 0, -1);
         
-        float*** image = myImage->getImage();
         
         for (int i=0;i<height;i++){
             for (int j=0;j<width;j++){
                 Vec3 o = Vec3(j-width/2,height/2-i,0);
                 
-                //check discriminant for hitting the sphere
+                //check determinant for hitting the sphere
                 float D = powf(d.dot(o.diff(c)), 2)-(d.dot(d)*(o.diff(c).dot(o.diff(c))-R*R));
                 if (D>0){
-                    // hit the sphere
-                    
+                    // ray hits the sphere
                     float t = (-d.dot(o.diff(c))-sqrt(D))/d.dot(d);
-                    if (t<0)
-                        t = (-d.dot(o.diff(c))+sqrt(D))/d.dot(d);
+                    // doesn't interact with positive half-ray
+                    if (t<0) return false;
                     
                     Vec3 hitP = o.add(d.times(t));
                     Vec3 l = lightS.diff(hitP);
                     Vec3 n = hitP.diff(c);
+                    Vec3 h = d.times(-1).add(l.unit()).unit();
                     
+                    Vec3 LDiffuse = E.times(Diffuse).times(n.unit().dot(l.unit()));
                     
-                    Vec3 L = E.times(Reflec).times(n.unit().dot(l.unit()));
+                    Vec3 LSpecular = Vec3(0, 0, 0);
+                    if (n.unit().dot(h)>0)
+                    LSpecular = White.times(Specular).times(pow(n.unit().dot(h), 50));
                     
+                    image[i][j][0] = (LDiffuse.getElement(0)/255>0?LDiffuse.getElement(0)/255:0) + E.times(Ambient).getElement(0)/255 + LSpecular.getElement(0)/255;
+                    image[i][j][1] = (LDiffuse.getElement(1)/255>0?LDiffuse.getElement(1)/255:0) + E.times(Ambient).getElement(1)/255 + LSpecular.getElement(1)/255;
+                    image[i][j][2] = (LDiffuse.getElement(2)/255>0?LDiffuse.getElement(2)/255:0) + E.times(Ambient).getElement(2)/255 + LSpecular.getElement(2)/255;
                     
-                    image[i][j][0] = (L.getElement(0)/255>0?L.getElement(0)/255:0) + E.times(Ambient).getElement(0)/255;
-                    image[i][j][1] = (L.getElement(1)/255>0?L.getElement(1)/255:0) + E.times(Ambient).getElement(1)/255;
-                    image[i][j][2] = (L.getElement(2)/255>0?L.getElement(2)/255:0) + E.times(Ambient).getElement(2)/255;
                     
                     Vec3 normalizedN = n.unit();
-                    
                     Vec3 reflectedRay = d.diff(normalizedN.times(2).times(d.dot(normalizedN)));
                     
+                    // if not parallel to the plane
                     if (reflectedRay.dot(planeN) != 0) {
                         float tForPlaneHit = ((planeA.diff(hitP).dot(planeN))/(reflectedRay.dot(planeN)));
                         if (tForPlaneHit > 0) {
@@ -104,9 +108,9 @@ void RayTracer::render(int objName, const char* filePath, ImageIO* texture){
                 }
             }
         }
-        
         myImage->writeImage(filePath);
     }
+    return true;
 }
 
 int RayTracer::getWidth(){
