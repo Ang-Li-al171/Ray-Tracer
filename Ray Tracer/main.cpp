@@ -12,6 +12,7 @@
 #include "ImageIO.h"
 #include "Filter.h"
 #include "RayTracer.h"
+#include "Vec3.h"
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
@@ -87,6 +88,7 @@ void keyboard( unsigned char key, int x, int y ) {
 
 int main(int argc, char * argv[])
 {
+    
     
     RayTracer trial1 = RayTracer();
     trial1.render(1);
