@@ -33,7 +33,8 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     // light source position Vec3
     
     Vec3 lightS = Vec3(100, 50, 50);
-    Vec3 E = Vec3(100, 100, 255);
+    Vec3 Blue = Vec3(100, 100, 255);
+    Vec3 LightBlue = Vec3(200, 200, 255);
     Vec3 White = Vec3(255, 255, 255);
     float Diffuse = 1.0;
     float Ambient = 0.3;
@@ -72,15 +73,15 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
                     Vec3 n = hitP.diff(c);
                     Vec3 h = d.times(-1).add(l.unit()).unit();
                     
-                    Vec3 LDiffuse = E.times(Diffuse).times(n.unit().dot(l.unit()));
+                    Vec3 LDiffuse = LightBlue.times(Diffuse).times(n.unit().dot(l.unit()));
                     
                     Vec3 LSpecular = Vec3(0, 0, 0);
                     if (n.unit().dot(h)>0)
-                    LSpecular = White.times(Specular).times(pow(n.unit().dot(h), 50));
+                    LSpecular = White.times(Specular).times(pow(n.unit().dot(h), 70));
                     
-                    image[i][j][0] = (LDiffuse.getElement(0)/255>0?LDiffuse.getElement(0)/255:0) + E.times(Ambient).getElement(0)/255 + LSpecular.getElement(0)/255;
-                    image[i][j][1] = (LDiffuse.getElement(1)/255>0?LDiffuse.getElement(1)/255:0) + E.times(Ambient).getElement(1)/255 + LSpecular.getElement(1)/255;
-                    image[i][j][2] = (LDiffuse.getElement(2)/255>0?LDiffuse.getElement(2)/255:0) + E.times(Ambient).getElement(2)/255 + LSpecular.getElement(2)/255;
+                    image[i][j][0] = (LDiffuse.getElement(0)/255>0?LDiffuse.getElement(0)/255:0) + Blue.times(Ambient).getElement(0)/255 + LSpecular.getElement(0)/255;
+                    image[i][j][1] = (LDiffuse.getElement(1)/255>0?LDiffuse.getElement(1)/255:0) + Blue.times(Ambient).getElement(1)/255 + LSpecular.getElement(1)/255;
+                    image[i][j][2] = (LDiffuse.getElement(2)/255>0?LDiffuse.getElement(2)/255:0) + Blue.times(Ambient).getElement(2)/255 + LSpecular.getElement(2)/255;
                     
                     
                     Vec3 normalizedN = n.unit();
