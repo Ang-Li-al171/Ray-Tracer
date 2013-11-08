@@ -8,10 +8,22 @@
 
 #include "Vec3.h"
 
+Vec3::Vec3(void){
+    elements[0] = 0;
+    elements[1] = 0;
+    elements[2] = 0;
+}
+
 Vec3::Vec3(float x, float y, float z){
     elements[0]=x;
     elements[1]=y;
     elements[2]=z;
+}
+
+Vec3::Vec3(const Vec3 &v){
+    elements[0] = v.elements[0];
+    elements[1] = v.elements[1];
+    elements[2] = v.elements[2];
 }
 
 Vec3::~Vec3(){

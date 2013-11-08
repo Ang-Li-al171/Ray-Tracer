@@ -16,7 +16,9 @@ using namespace std;
 
 class Vec3{
 public:
+    Vec3(void);
     Vec3(float x, float y, float z);
+    Vec3(const Vec3 &v);
     ~Vec3(void);
     float getElement(int index);
     Vec3 add(Vec3 v);
