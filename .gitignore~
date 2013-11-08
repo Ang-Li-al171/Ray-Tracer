@@ -1,3 +1,6 @@
 .DSStore
 .D*
 *.ppm
+*.jpg
+*.gif
+*.png
