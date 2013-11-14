@@ -310,7 +310,7 @@ void ImageIO::writeImage(const char* file_name){
     FILE* file;
     file = fopen(file_name, "w");
     if(!file){
-        fprintf(stderr, "Unable to open file %s", file_name);
+        fprintf(stderr, "Unable to open fileeeeeee %s", file_name);
         exit(1);
     }
     

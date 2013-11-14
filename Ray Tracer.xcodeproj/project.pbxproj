@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B8BDBA31834825000E0FB27 /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B8BDBA11834825000E0FB27 /* Sphere.cpp */; };
 		BC0426E6182D395000DE3B1A /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0426E4182D395000DE3B1A /* Light.cpp */; };
 		BCB12DC318235EAC00C0B07F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB12DC218235EAC00C0B07F /* main.cpp */; };
 		BCB12DC518235EAC00C0B07F /* Ray_Tracer.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCB12DC418235EAC00C0B07F /* Ray_Tracer.1 */; };
@@ -33,6 +34,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B8BDBA11834825000E0FB27 /* Sphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sphere.cpp; sourceTree = "<group>"; };
+		4B8BDBA21834825000E0FB27 /* Sphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere.h; sourceTree = "<group>"; };
 		BC0426E4182D395000DE3B1A /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Light.cpp; sourceTree = "<group>"; };
 		BC0426E5182D395000DE3B1A /* Light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Light.h; sourceTree = "<group>"; };
 		BCB12DBF18235EAC00C0B07F /* Ray Tracer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Ray Tracer"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,6 +94,8 @@
 				BCB12DD41823636700C0B07F /* ImageIO.cpp */,
 				BCB12DD51823636700C0B07F /* ImageIO.h */,
 				BCB12DC218235EAC00C0B07F /* main.cpp */,
+				4B8BDBA11834825000E0FB27 /* Sphere.cpp */,
+				4B8BDBA21834825000E0FB27 /* Sphere.h */,
 				BCB12DC418235EAC00C0B07F /* Ray_Tracer.1 */,
 				BCB12DCF182362F500C0B07F /* RTMath.cpp */,
 				BCB12DD0182362F500C0B07F /* RTMath.h */,
@@ -157,6 +162,7 @@
 			files = (
 				BCB12DC318235EAC00C0B07F /* main.cpp in Sources */,
 				BCB12DD1182362F500C0B07F /* RTMath.cpp in Sources */,
+				4B8BDBA31834825000E0FB27 /* Sphere.cpp in Sources */,
 				BCB12DD61823636700C0B07F /* filter.cpp in Sources */,
 				BCB12DD71823636700C0B07F /* ImageIO.cpp in Sources */,
 				BCB12DDB182364DA00C0B07F /* RayTracer.cpp in Sources */,

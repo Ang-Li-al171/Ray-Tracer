@@ -97,12 +97,12 @@ const char* appendWithCWD(const char* fileName){
 int main(int argc, char * argv[])
 {
     
-    ImageIO * texture = new ImageIO(appendWithCWD("/checkerboard_red.ppm"));
+    ImageIO * texture = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/Ray Tracer/checkerboard_red.ppm");
     
     RayTracer trial1 = RayTracer();
-    trial1.render(1, appendWithCWD("/testTraceSphere.ppm"), texture);
+    trial1.render(1, "/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/Ray Tracer/testTraceSphere.ppm", texture);
     
-    ImageIO * the_image = new ImageIO(appendWithCWD("/testTraceSphere.ppm"));
+    ImageIO * the_image = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/Ray Tracer/testTraceSphere.ppm");
     current_image = the_image;
     
     win_height = current_image->getHeight();

@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "Sphere.h"
 #include <GLUT/glut.h>
 
 RayTracer::RayTracer(){
@@ -50,39 +51,51 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     if (objName == 1){
         // orthographical camera with 100*100 pixels
         // shoot a ray in d=(0,0,-1) direction from each of the pixels
-        
-        float R = 100;
-        Vec3 c = Vec3(0, 0, -100);
+
         Vec3 d = Vec3(0, 0, -1);
+        int sphereSize = 3;
+        Sphere** sphereList = new Sphere*[sphereSize];
+        Sphere* sphere = new Sphere(Vec3(0, 0, -100), 100, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.1, 1);
+        Sphere* sphere2 = new Sphere(Vec3(0, -100, -40), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.1, 1);
+        Sphere* sphere3 = new Sphere(Vec3(-100, 120, -80), 50, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.1, 1);
+        sphereList[0] = sphere;
+        sphereList[1] = sphere2;
+        sphereList[2] = sphere3;
+        
         
         
         for (int i=0;i<height;i++){
             for (int j=0;j<width;j++){
                 Vec3 o = Vec3(j-width/2,height/2-i,0);
+                //take record of smallest t
+                float t = INFINITY;
+                float tNear = INFINITY;
+                Sphere* hitSphere;
                 
-                //check determinant for hitting the sphere
-                float D = powf(d.dot(o.diff(c)), 2)-(d.dot(d)*(o.diff(c).dot(o.diff(c))-R*R));
-                if (D>0){
-                    // ray hits the sphere
-                    float t = (-d.dot(o.diff(c))-sqrt(D))/d.dot(d);
-                    // doesn't interact with positive half-ray
-                    if (t<0) return false;
-                    
+                for (int k = 0; k<sphereSize; k++) {
+                    if (sphereList[k]->intersect(o, d, &t)) {
+                        if (t < tNear){
+                            tNear = t;
+                            hitSphere = sphereList[k];
+                        }
+                    }
+                }
+                
+                if (tNear != INFINITY) {
                     Vec3 hitP = o.add(d.times(t));
                     Vec3 l = lightS.diff(hitP);
-                    Vec3 n = hitP.diff(c);
+                    Vec3 n = hitP.diff(hitSphere->getCenter());
                     Vec3 h = d.times(-1).add(l.unit()).unit();
                     
                     Vec3 LDiffuse = LightBlue.times(Diffuse).times(n.unit().dot(l.unit()));
                     
                     Vec3 LSpecular = Vec3(0, 0, 0);
                     if (n.unit().dot(h)>0)
-                    LSpecular = White.times(Specular).times(pow(n.unit().dot(h), 70));
+                        LSpecular = White.times(Specular).times(pow(n.unit().dot(h), 70));
                     
                     image[i][j][0] = (LDiffuse.getElement(0)/255>0?LDiffuse.getElement(0)/255:0) + Blue.times(Ambient).getElement(0)/255 + LSpecular.getElement(0)/255;
                     image[i][j][1] = (LDiffuse.getElement(1)/255>0?LDiffuse.getElement(1)/255:0) + Blue.times(Ambient).getElement(1)/255 + LSpecular.getElement(1)/255;
                     image[i][j][2] = (LDiffuse.getElement(2)/255>0?LDiffuse.getElement(2)/255:0) + Blue.times(Ambient).getElement(2)/255 + LSpecular.getElement(2)/255;
-                    
                     
                     Vec3 normalizedN = n.unit();
                     Vec3 reflectedRay = d.diff(normalizedN.times(2).times(d.dot(normalizedN)));
@@ -106,6 +119,10 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
                             }
                         }
                     }
+                } else {
+                    image[i][j][0] = 0;
+                    image[i][j][1] = 0;
+                    image[i][j][2] = 0;
                 }
             }
         }
