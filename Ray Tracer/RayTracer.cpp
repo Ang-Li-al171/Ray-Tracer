@@ -50,6 +50,7 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
         Vec3 n = hitP.diff(hitSphere->getCenter());
         Vec3 normalizedN = n.unit();
         
+        float bias = 1e-4;
         bool inside = false;
         if (d.dot(normalizedN) > 0) {
             normalizedN = normalizedN.times(-1);
@@ -89,6 +90,21 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
             float fresnelEffect = 1;
             
             if (hitSphere->getTrans() > 0) {
+//                float ior = 1.1;
+//                float eta = (inside) ? ior : 1 / ior;
+//                float cosi = normalizedN.times(-1).dot(d);
+//                float k = 1 - eta * eta * (1 - cosi * cosi);
+//                Vec3 refractionDir = d.times(eta).add(normalizedN.times((eta *  cosi - sqrt(k))));
+//                refractionDir = refractionDir.unit();
+//                Vec3 originOne = hitP.diff(normalizedN);
+//                
+//                float tInside;
+//                hitSphere->intersect(originOne, refractionDir, &tInside);
+//                Vec3 hitP = origin.add(d.times(tNear));
+//                Vec3 n = hitP.diff(hitSphere->getCenter());
+//                Vec3 normalizedN = n.unit();
+//                
+//                
                 refractionColor = Vec3(0.5, 0.5, 0.5);
                 fresnelEffect = 0.4;            //hard code reflection and refraction ratio
 
@@ -97,15 +113,25 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
 
             
         } else {    //diffuse/max depth -> no ray tracing any further
-            Vec3 lightS = Vec3(100, 50, 50);
+            Vec3 lightS = Vec3(200, 70, 50);
             Vec3 Blue = Vec3(100, 100, 255);
             Vec3 LightBlue = Vec3(200, 200, 255);
             Vec3 White = Vec3(255, 255, 255);
             float Diffuse = 1.0;
             float Ambient = 0.3;
             float Specular = 0.8;
+            float transmission = 1;
 
             Vec3 lightDirection = lightS.diff(hitP);
+            
+            for (int i = 0; i<size; i++) {
+                float t0;
+                if (sphereList[i]->intersect(hitP.add(normalizedN.times(bias)), lightDirection, &t0)) {
+                    transmission = 0;
+                    break;
+                }
+            }
+            
             
             Vec3 h = d.times(-1).add(lightDirection.unit()).unit();
             
@@ -115,11 +141,13 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
             if (n.unit().dot(h)>0)
                 LSpecular = White.times(Specular).times(pow(n.unit().dot(h), 70));
             
-            float r = (LDiffuse.getElement(0)/255>0?LDiffuse.getElement(0)/255:0) + Blue.times(Ambient).getElement(0)/255 + LSpecular.getElement(0)/255;
-            float g = (LDiffuse.getElement(1)/255>0?LDiffuse.getElement(1)/255:0) + Blue.times(Ambient).getElement(1)/255 + LSpecular.getElement(1)/255;
-            float b = (LDiffuse.getElement(2)/255>0?LDiffuse.getElement(2)/255:0) + Blue.times(Ambient).getElement(2)/255 + LSpecular.getElement(2)/255;
+            float r = (LDiffuse.getElement(0)/255>0?LDiffuse.getElement(0)/255:0) + LSpecular.getElement(0)/255;
+            float g = (LDiffuse.getElement(1)/255>0?LDiffuse.getElement(1)/255:0) + LSpecular.getElement(1)/255;
+            float b = (LDiffuse.getElement(2)/255>0?LDiffuse.getElement(2)/255:0) + LSpecular.getElement(2)/255;
             
-            return Vec3(r, g, b);
+            Vec3 ambientColor = Vec3(Blue.times(Ambient).getElement(0)/255, Blue.times(Ambient).getElement(1)/255, Blue.times(Ambient).getElement(2)/255);
+            
+            return Vec3(r, g, b).times(transmission).add(ambientColor);
             
         }
         
@@ -141,7 +169,7 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     Sphere** sphereList = new Sphere*[sphereSize];
     Sphere* sphere = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.2, 0);
     Sphere* sphere2 = new Sphere(Vec3(0, -50, -30), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.2, 0.3);
-    Sphere* sphere3 = new Sphere(Vec3(-100, 120, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
+    Sphere* sphere3 = new Sphere(Vec3(100, 100, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
     sphereList[0] = sphere;
     sphereList[1] = sphere2;
     sphereList[2] = sphere3;

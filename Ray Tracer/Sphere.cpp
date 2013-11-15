@@ -34,7 +34,7 @@ bool Sphere::intersect(const Vec3 &o, const Vec3 &d, float *t){
     if (D < 0) return false;
     else if (D == 0) {
         float t1 = (-dd.dot(oo.diff(center))-sqrt(D))/dd.dot(dd);
-        if (t1 < 0) {
+        if (t1 <= 0) {
             return false;
         } else {
             *t = t1;
@@ -43,9 +43,9 @@ bool Sphere::intersect(const Vec3 &o, const Vec3 &d, float *t){
     } else {
         float t1 = (-dd.dot(oo.diff(center))-sqrt(D))/dd.dot(dd);
         float t2 = (-dd.dot(oo.diff(center))+sqrt(D))/dd.dot(dd);
-        if (t1<0 && t2<0) {
+        if (t1<=0 && t2<=0) {
             return false;
-        } else if (t1 < 0 && t2>=0) {
+        } else if (t1 <= 0 && t2>0) {
             *t = t2;
             return true;
         } else {
