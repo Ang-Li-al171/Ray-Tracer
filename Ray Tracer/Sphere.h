@@ -21,6 +21,9 @@ public:
     ~Sphere(void);
     bool intersect(const Vec3 &o, const Vec3 &d, float *t);
     Vec3 getCenter(void);
+    float getRefl(void);
+    float getTrans(void);
+    Vec3 getSurfaceColor(void);
     
 private:
     Vec3 center;

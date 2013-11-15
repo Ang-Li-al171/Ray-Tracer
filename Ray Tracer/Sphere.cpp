@@ -58,3 +58,14 @@ Vec3 Sphere::getCenter() {
     return center;
 }
 
+float Sphere::getRefl() {
+    return reflection;
+}
+
+float Sphere::getTrans() {
+    return transparency;
+}
+
+Vec3 Sphere::getSurfaceColor() {
+    return surfaceColor;
+}
