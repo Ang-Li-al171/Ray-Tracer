@@ -92,10 +92,16 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
             if (hitSphere->getTrans() > 0) {
                 float ior = 1.1;
                 float eta = (inside) ? ior : 1 / ior;   //this is n/nt
-                float cosi = normalizedN.times(-1).dot(d);
-                float cosiIn = sqrt(1 - eta * eta * (1 - cosi * cosi)); //this is cosi'
+                float cosi = normalizedN.times(-1).dot(d.unit());
+                float cosiIn;
+                if ((1 - eta * eta * (1 - cosi * cosi)) >0) {
+                    cosiIn = sqrt(1 - eta * eta * (1 - cosi * cosi)); //this is cosi'
+                } else {
+                    return Vec3(0, 0, 0);
+                }
                 
-                Vec3 refractionDirIn = (d.add(normalizedN.times(cosi))).times(eta).diff(normalizedN.times(cosiIn));
+                
+                Vec3 refractionDirIn = (d.add(normalizedN.times(cosi))).times(eta).diff(normalizedN.times(cosiIn)).unit();
                 Vec3 originIn = hitP.diff(normalizedN.times(bias));
                 
                 //ray inside sphere
@@ -105,13 +111,16 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
                     Vec3 nInside = hitPInside.diff(hitSphere->getCenter());
                     Vec3 normalizedNInside = nInside.unit().times(-1);
                     eta = ior;
-                    float temp = cosi;
-                    cosi = cosiIn;
-                    cosiIn = temp;
+                    cosi = normalizedNInside.times(-1).dot(refractionDirIn.unit());
+                    if ((1 - eta * eta * (1 - cosi * cosi)) >0) {
+                        cosiIn = sqrt(1 - eta * eta * (1 - cosi * cosi)); //this is cosi'
+                    } else {
+                        return Vec3(0, 0, 0);
+                    }
+
                     
-                    Vec3 refractionDirOut = (refractionDirIn.add(normalizedNInside.times(cosi))).times(eta).diff(normalizedNInside.times(cosiIn));
+                    Vec3 refractionDirOut = (refractionDirIn.add(normalizedNInside.times(cosi))).times(eta).diff(normalizedNInside.times(cosiIn)).unit();
                     
-                    refractionDirOut = refractionDirOut.unit();
                     Vec3 originOut = hitPInside.diff(normalizedNInside.times(bias));
                     
                     float tOutside = INFINITY;
@@ -180,6 +189,28 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
         }
         
     } else {
+        Vec3 planeA = Vec3(0, -200, 0);
+        Vec3 planeN = Vec3(0, 1, 0.1);
+        if (d.dot(planeN) != 0) {    //now set reflection to plane (hard code)
+            float tForPlaneHit = ((planeA.diff(origin).dot(planeN))/(d.dot(planeN)));
+            if (tForPlaneHit > 0) {
+                Vec3 planeHitP = origin.add(d.times(tForPlaneHit));
+                Vec3 planeP = planeHitP.diff(planeA);
+                int x = (planeP.getElement(0));
+                int y = sqrt(pow(planeP.getElement(1), 2) + pow(planeP.getElement(2), 2));
+                //int z = (planeHitP.getElement(2));
+                
+                if (abs(x) < 288*2 && abs(y) < 288*2){
+                    x = fabs(x);
+                    y = fabs(y);
+                    x = x%288;
+                    y = y%288;
+                    return Vec3(texture_image[x][y][0], texture_image[x][y][1], texture_image[x][y][2]);
+                }
+            }
+        }
+
+        
         return Vec3(0, 0, 0);
     }
 
@@ -196,7 +227,7 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     int sphereSize = 3;
     Sphere** sphereList = new Sphere*[sphereSize];
     Sphere* sphere = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.2, 0);
-    Sphere* sphere2 = new Sphere(Vec3(-80, -50, -30), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.2, 0.3);
+    Sphere* sphere2 = new Sphere(Vec3(-73, -50, -30), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.2, 0.3);
     Sphere* sphere3 = new Sphere(Vec3(100, 100, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
     sphereList[0] = sphere;
     sphereList[1] = sphere2;
