@@ -90,22 +90,50 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
             float fresnelEffect = 1;
             
             if (hitSphere->getTrans() > 0) {
-//                float ior = 1.1;
-//                float eta = (inside) ? ior : 1 / ior;
-//                float cosi = normalizedN.times(-1).dot(d);
-//                float k = 1 - eta * eta * (1 - cosi * cosi);
-//                Vec3 refractionDir = d.times(eta).add(normalizedN.times((eta *  cosi - sqrt(k))));
-//                refractionDir = refractionDir.unit();
-//                Vec3 originOne = hitP.diff(normalizedN);
-//                
-//                float tInside;
-//                hitSphere->intersect(originOne, refractionDir, &tInside);
-//                Vec3 hitP = origin.add(d.times(tNear));
-//                Vec3 n = hitP.diff(hitSphere->getCenter());
-//                Vec3 normalizedN = n.unit();
-//                
-//                
-                refractionColor = Vec3(0.5, 0.5, 0.5);
+                float ior = 1.1;
+                float eta = (inside) ? ior : 1 / ior;   //this is n/nt
+                float cosi = normalizedN.times(-1).dot(d);
+                float cosiIn = sqrt(1 - eta * eta * (1 - cosi * cosi)); //this is cosi'
+                
+                Vec3 refractionDirIn = (d.add(normalizedN.times(cosi))).times(eta).diff(normalizedN.times(cosiIn));
+                Vec3 originIn = hitP.diff(normalizedN.times(bias));
+                
+                //ray inside sphere
+                float tInside;
+                if (hitSphere->intersect(originIn, refractionDirIn, &tInside)){
+                    Vec3 hitPInside = originIn.add(refractionDirIn.times(tInside));
+                    Vec3 nInside = hitPInside.diff(hitSphere->getCenter());
+                    Vec3 normalizedNInside = nInside.unit().times(-1);
+                    eta = ior;
+                    float temp = cosi;
+                    cosi = cosiIn;
+                    cosiIn = temp;
+                    
+                    Vec3 refractionDirOut = (refractionDirIn.add(normalizedNInside.times(cosi))).times(eta).diff(normalizedNInside.times(cosiIn));
+                    
+                    refractionDirOut = refractionDirOut.unit();
+                    Vec3 originOut = hitPInside.diff(normalizedNInside.times(bias));
+                    
+                    float tOutside = INFINITY;
+                    float t0 = INFINITY;
+                    Sphere* refraSphere;
+                    
+                    for (int k = 0; k<size; k++) {
+                        if (sphereList[k]->intersect(originOut, refractionDirOut, &t0)) {
+                            if (t0 < tOutside) {
+                                tOutside = t0;
+                                refraSphere = sphereList[k];
+                            }
+                        }
+                    }
+                    if (tOutside != INFINITY) {
+                        refractionColor = refraSphere->getSurfaceColor();
+                    } else {
+                        refractionColor = Vec3(0, 0, 0);
+                    }
+                } else {
+                    refractionColor = Vec3(0, 0, 0);
+                }
                 fresnelEffect = 0.4;            //hard code reflection and refraction ratio
 
             }
@@ -168,7 +196,7 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     int sphereSize = 3;
     Sphere** sphereList = new Sphere*[sphereSize];
     Sphere* sphere = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.2, 0);
-    Sphere* sphere2 = new Sphere(Vec3(0, -50, -30), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.2, 0.3);
+    Sphere* sphere2 = new Sphere(Vec3(-80, -50, -30), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.2, 0.3);
     Sphere* sphere3 = new Sphere(Vec3(100, 100, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
     sphereList[0] = sphere;
     sphereList[1] = sphere2;
