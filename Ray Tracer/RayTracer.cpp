@@ -50,6 +50,11 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
         Vec3 n = hitP.diff(hitSphere->getCenter());
         Vec3 normalizedN = n.unit();
         
+        bool inside = false;
+        if (d.dot(normalizedN) > 0) {
+            normalizedN = normalizedN.times(-1);
+            inside = true;
+        }
         
         if (depth < MAX_RAY_DEPTH && (hitSphere->getRefl() > 0 || hitSphere->getTrans() >0)){
             Vec3 reflectedRay = d.diff(normalizedN.times(2).times(d.dot(normalizedN)));
@@ -57,12 +62,11 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
             Vec3 planeA = Vec3(0, -200, 0);
             Vec3 planeN = Vec3(0, 1, 0);
             
-            float r =hitSphere->getSurfaceColor().getElement(0);
-            float g = hitSphere->getSurfaceColor().getElement(1);
-            float b = hitSphere->getSurfaceColor().getElement(2);
+            Vec3 reflectionColor = trace(origin, d, sphereList, size, depth+1);
+            Vec3 surfaceColor = Vec3(0, 0, 0);
             
             // if not parallel to the plane
-            if (reflectedRay.dot(planeN) != 0) {
+            if (reflectedRay.dot(planeN) != 0) {    //now set reflection to plane (hard code)
                 float tForPlaneHit = ((planeA.diff(hitP).dot(planeN))/(reflectedRay.dot(planeN)));
                 if (tForPlaneHit > 0) {
                     Vec3 planeHitP = hitP.add(reflectedRay.times(tForPlaneHit));
@@ -74,14 +78,23 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
                         x = x%288;
                         y = y%288;
                         
-                        r = hitSphere->getSurfaceColor().getElement(0)*(1- hitSphere->getRefl()) + texture_image[x][y][0]*(hitSphere->getRefl());
-                        g = hitSphere->getSurfaceColor().getElement(1)*(1- hitSphere->getRefl()) + texture_image[x][y][1]*(hitSphere->getRefl());
-                        b = hitSphere->getSurfaceColor().getElement(2)*(1- hitSphere->getRefl()) + texture_image[x][y][2]*(hitSphere->getRefl());
+                        surfaceColor = Vec3(texture_image[x][y][0], texture_image[x][y][1], texture_image[x][y][2]);
                     }
                 }
             }
-            Vec3 reflectionColor = trace(origin, d, sphereList, size, depth+1);
-            return Vec3(r*0.3 + reflectionColor.getElement(0)*0.7, g*0.3 + reflectionColor.getElement(1)*0.7, b*0.3 + reflectionColor.getElement(b)*0.7);
+            
+            reflectionColor = reflectionColor.times(0.8).add(surfaceColor.times(0.2));
+            
+            Vec3 refractionColor = Vec3(0, 0, 0);
+            float fresnelEffect = 1;
+            
+            if (hitSphere->getTrans() > 0) {
+                refractionColor = Vec3(0.5, 0.5, 0.5);
+                fresnelEffect = 0.4;            //hard code reflection and refraction ratio
+
+            }
+            return reflectionColor.times(fresnelEffect).add(refractionColor.times(1-fresnelEffect));
+
             
         } else {    //diffuse/max depth -> no ray tracing any further
             Vec3 lightS = Vec3(100, 50, 50);
@@ -126,9 +139,9 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     Vec3 d = Vec3(0, 0, -1);
     int sphereSize = 3;
     Sphere** sphereList = new Sphere*[sphereSize];
-    Sphere* sphere = new Sphere(Vec3(0, 0, -100), 100, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.3, 0);
-    Sphere* sphere2 = new Sphere(Vec3(0, -100, -40), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.3, 0);
-    Sphere* sphere3 = new Sphere(Vec3(-100, 120, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.3, 0);
+    Sphere* sphere = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.2, 0);
+    Sphere* sphere2 = new Sphere(Vec3(0, -50, -30), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.2, 0.3);
+    Sphere* sphere3 = new Sphere(Vec3(-100, 120, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
     sphereList[0] = sphere;
     sphereList[1] = sphere2;
     sphereList[2] = sphere3;
