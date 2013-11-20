@@ -7,11 +7,6 @@
 //
 
 #include "RayTracer.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include "Sphere.h"
-#include <GLUT/glut.h>
 
 int MAX_RAY_DEPTH = 2;
 float*** texture_image;
@@ -63,31 +58,26 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** sphereList, int size, int d
             
             Vec3 reflectedRay = d.diff(normalizedN.times(2).times(d.dot(normalizedN)));
             
-            Vec3 planeA = Vec3(0, -200, 0);
-            Vec3 planeN = Vec3(0, 1, 0);
+            Plane *checkerBoard = new Plane(Vec3(0, -200, 0), Vec3(0, 1, 0), 288*2, 288*2, Vec3(0, 0, 0), Vec3(0, 0, 0), 0.0, 0.0, texture_image);
             
             Vec3 reflectionColor = trace(origin, d, sphereList, size, depth+1);
             Vec3 surfaceColor = Vec3(0, 0, 0);
             
-            // if not parallel to the plane
-            if (reflectedRay.dot(planeN) != 0) {    //now set reflection to plane (hard code)
-                float tForPlaneHit = ((planeA.diff(hitP).dot(planeN))/(reflectedRay.dot(planeN)));
-                if (tForPlaneHit > 0) {
-                    Vec3 planeHitP = hitP.add(reflectedRay.times(tForPlaneHit));
-                    
-                    int x = fabs(planeHitP.getElement(0));
-                    int y = fabs(planeHitP.getElement(2));
-                    
-                    if (x < 288*2 && y < 288*2){
-                        x = x%288;
-                        y = y%288;
-                        
-                        surfaceColor = Vec3(texture_image[x][y][0], texture_image[x][y][1], texture_image[x][y][2]);
-                    }
-                }
-            }
+            float reflectT;
+            if (checkerBoard->intersect(hitP, reflectedRay, &reflectT)){
             
-            reflectionColor = reflectionColor.times(0.8).add(surfaceColor.times(0.2));
+                Vec3 planeHitP = hitP.add(reflectedRay.times(reflectT));
+                int x = fabs(planeHitP.getElement(0));
+                int y = fabs(planeHitP.getElement(2));
+
+                x = x%288; // need to get this info from texture_image
+                y = y%288; // need to get this info from texture_image
+                
+                surfaceColor = Vec3(texture_image[x][y][0], texture_image[x][y][1], texture_image[x][y][2]);
+            
+                reflectionColor = reflectionColor.times(0.8).add(surfaceColor.times(0.2));
+        
+            }
             
             Vec3 refractionColor = Vec3(0, 0, 0);
             float fresnelEffect = 1;
@@ -153,69 +143,42 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** sphereList, int size, int d
 
             
         } else {    //diffuse/max depth -> no ray tracing any further
-            Vec3 lightS = Vec3(200, 70, 50);
-            Vec3 Blue = Vec3(100, 100, 255);
-            Vec3 LightBlue = Vec3(200, 200, 255);
-            Vec3 White = Vec3(255, 255, 255);
-            float Diffuse = 1.0;
-            float Ambient = 0.3;
-            float Specular = 0.8;
-            float transmission = 1;
+            
+            Light l = Light(Vec3(200, 200, 255), Vec3(100, 100, 255),Vec3(255, 255, 255) ,Vec3(200, 70, 50));
 
-            Vec3 lightDirection = lightS.diff(hitP);
+            Vec3 LightColor = hitSphere->getLightAt(d, hitP, l);
             
-            for (int i = 0; i<size; i++) {
-                float t0;
-                if (sphereList[i]->intersect(hitP.add(normalizedN.times(bias)), lightDirection, &t0)) {
-                    transmission = 0;
-                    break;
-                }
-            }
-            
-            
-            Vec3 h = d.times(-1).add(lightDirection.unit()).unit();
-            
-            Vec3 LDiffuse = LightBlue.times(Diffuse).times(n.unit().dot(lightDirection.unit()));
-            
-            Vec3 LSpecular = Vec3(0, 0, 0);
-            if (n.unit().dot(h)>0)
-                LSpecular = White.times(Specular).times(pow(n.unit().dot(h), 70));
-            
-            float r = (LDiffuse.getElement(0)/255>0?LDiffuse.getElement(0)/255:0) + LSpecular.getElement(0)/255;
-            float g = (LDiffuse.getElement(1)/255>0?LDiffuse.getElement(1)/255:0) + LSpecular.getElement(1)/255;
-            float b = (LDiffuse.getElement(2)/255>0?LDiffuse.getElement(2)/255:0) + LSpecular.getElement(2)/255;
-            
-            Vec3 ambientColor = Vec3(Blue.times(Ambient).getElement(0)/255, Blue.times(Ambient).getElement(1)/255, Blue.times(Ambient).getElement(2)/255);
-            
-            return Vec3(r, g, b).times(transmission).add(ambientColor);
+            return LightColor;
             
         }
         
     }
     // the ray doesn't intersect any object in the list
     else {
-        Vec3 planeA = Vec3(0, -200, 0);
-        Vec3 planeN = Vec3(0, 1, 0.1);
-        if (d.dot(planeN) != 0) {    //now set reflection to plane (hard code)
-            float tForPlaneHit = ((planeA.diff(origin).dot(planeN))/(d.dot(planeN)));
-            if (tForPlaneHit > 0) {
-                Vec3 planeHitP = origin.add(d.times(tForPlaneHit));
-                Vec3 planeP = planeHitP.diff(planeA);
-                int x = (planeP.getElement(0));
-                int y = sqrt(pow(planeP.getElement(1), 2) + pow(planeP.getElement(2), 2));
-                //int z = (planeHitP.getElement(2));
-                
-                if (abs(x) < 288*2 && abs(y) < 288*2){
-                    x = fabs(x);
-                    y = fabs(y);
-                    x = x%288;
-                    y = y%288;
-                    return Vec3(texture_image[x][y][0], texture_image[x][y][1], texture_image[x][y][2]);
-                }
-            }
-        }
+//        drawing the checkerboard plane, doesn't fit in this recursion
+//        Vec3 planeA = Vec3(0, -200, 0);
+//        Vec3 planeN = Vec3(0, 1, 0.1);
+//        if (d.dot(planeN) != 0) {    //now set reflection to plane (hard code)
+//            float tForPlaneHit = ((planeA.diff(origin).dot(planeN))/(d.dot(planeN)));
+//            if (tForPlaneHit > 0) {
+//                Vec3 planeHitP = origin.add(d.times(tForPlaneHit));
+//                Vec3 planeP = planeHitP.diff(planeA);
+//                int x = (planeP.getElement(0));
+//                int y = sqrt(pow(planeP.getElement(1), 2) + pow(planeP.getElement(2), 2));
+//                //int z = (planeHitP.getElement(2));
+//                
+//                if (abs(x) < 288*2 && abs(y) < 288*2){
+//                    x = fabs(x);
+//                    y = fabs(y);
+//                    x = x%288;
+//                    y = y%288;
+//                    return Vec3(texture_image[x][y][0], texture_image[x][y][1], texture_image[x][y][2]);
+//                }
+//            }
+//        }
 
         
+        // doesn't hit anything, return default black background color
         return Vec3(0, 0, 0);
     }
 

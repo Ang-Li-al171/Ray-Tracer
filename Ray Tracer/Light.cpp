@@ -23,18 +23,18 @@ Light::~Light(void){
     specularLightColor.~Vec3();
 }
 
-Vec3* Light::getDiffuse(void){
-    return &diffuseLightColor;
+Vec3 Light::getDiffuse(void){
+    return diffuseLightColor;
 }
 
-Vec3* Light::getAmbient(void){
-    return &ambientLightColor;
+Vec3 Light::getAmbient(void){
+    return ambientLightColor;
 }
 
-Vec3* Light::getSpecular(void){
-    return &specularLightColor;
+Vec3 Light::getSpecular(void){
+    return specularLightColor;
 }
 
-Vec3* Light::getLightSource(void){
-    return &lightSource;
+Vec3 Light::getLightSource(void){
+    return lightSource;
 }

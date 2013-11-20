@@ -12,6 +12,14 @@
 #include <iostream>
 #include "ImageIO.h"
 #include "Sphere.h"
+#include "RayTracer.h"
+#include "Sphere.h"
+#include "Plane.h"
+#include "Light.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <GLUT/glut.h>
 //#include <GLUT/glut.h>
 
 using namespace std;

@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include "Vec3.h"
+#include "Light.h"
 
 using namespace std;
 
@@ -19,6 +20,11 @@ class TObject
 public:
     virtual ~TObject() {}
     virtual bool intersect(const Vec3 &o, const Vec3 &d, float *t) = 0;
+//    virtual Vec3 getSurfaceColor(void);
+//    virtual Vec3 getEmissionColor(void);
+//    virtual float getRefl(void);
+//    virtual float getTrans(void);
+//    virtual Vec3 getCenter(void);
 };
 
 
@@ -32,6 +38,8 @@ public:
     float getRefl(void);
     float getTrans(void);
     Vec3 getSurfaceColor(void);
+    Vec3 getEmissionColor(void);
+    Vec3 getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l);
     
 private:
     Vec3 center;

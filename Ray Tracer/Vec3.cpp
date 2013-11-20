@@ -69,3 +69,19 @@ Vec3 Vec3::cross(Vec3 v){
 float Vec3::length(){
     return sqrt(getElement(0)*getElement(0)+getElement(1)*getElement(1)+getElement(2)*getElement(2));
 }
+
+Vec3 Vec3::clamp(float lower, float upper){
+    float out[3];
+    for (int i=0; i<3; i++){
+        if (elements[i] < lower)
+            out[i] = lower;
+        else if (elements[i] > upper){
+            out[i] = upper;
+        }
+        else{
+            out[i] = elements[i];
+        }
+    }
+    return Vec3(out[0], out[1], out[2]);
+}
+

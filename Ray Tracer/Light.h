@@ -20,10 +20,10 @@ public:
     Light(void);
     Light(const Vec3 &diffuse, const Vec3 &ambient, const Vec3 &specular, const Vec3 &lightsource);
     ~Light(void);
-    Vec3* getDiffuse(void);
-    Vec3* getAmbient(void);
-    Vec3* getSpecular(void);
-    Vec3* getLightSource(void);
+    Vec3 getDiffuse(void);
+    Vec3 getAmbient(void);
+    Vec3 getSpecular(void);
+    Vec3 getLightSource(void);
     
 private:
     Vec3 diffuseLightColor;

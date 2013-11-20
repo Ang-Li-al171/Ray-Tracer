@@ -28,6 +28,7 @@ public:
     Vec3 cross(Vec3 v);
     float length(void);
     Vec3 unit(void);
+    Vec3 clamp(float lower, float upper);
     
 private:
     float elements[3];

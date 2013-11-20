@@ -17,6 +17,7 @@
 		BCB12DD71823636700C0B07F /* ImageIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB12DD41823636700C0B07F /* ImageIO.cpp */; };
 		BCB12DDB182364DA00C0B07F /* RayTracer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB12DD9182364DA00C0B07F /* RayTracer.cpp */; };
 		BCB12DDE182368EF00C0B07F /* Vec3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB12DDC182368EF00C0B07F /* Vec3.cpp */; };
+		BCF141BC183C485E00D25EE0 /* Plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF141BA183C485E00D25EE0 /* Plane.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -50,6 +51,8 @@
 		BCB12DDA182364DA00C0B07F /* RayTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RayTracer.h; sourceTree = "<group>"; };
 		BCB12DDC182368EF00C0B07F /* Vec3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vec3.cpp; sourceTree = "<group>"; };
 		BCB12DDD182368EF00C0B07F /* Vec3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vec3.h; sourceTree = "<group>"; };
+		BCF141BA183C485E00D25EE0 /* Plane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plane.cpp; sourceTree = "<group>"; };
+		BCF141BB183C485E00D25EE0 /* Plane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plane.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +103,8 @@
 				BCB12DDD182368EF00C0B07F /* Vec3.h */,
 				BC0426E4182D395000DE3B1A /* Light.cpp */,
 				BC0426E5182D395000DE3B1A /* Light.h */,
+				BCF141BA183C485E00D25EE0 /* Plane.cpp */,
+				BCF141BB183C485E00D25EE0 /* Plane.h */,
 			);
 			path = "Ray Tracer";
 			sourceTree = "<group>";
@@ -162,6 +167,7 @@
 				BCB12DDB182364DA00C0B07F /* RayTracer.cpp in Sources */,
 				BCB12DDE182368EF00C0B07F /* Vec3.cpp in Sources */,
 				BC0426E6182D395000DE3B1A /* Light.cpp in Sources */,
+				BCF141BC183C485E00D25EE0 /* Plane.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
