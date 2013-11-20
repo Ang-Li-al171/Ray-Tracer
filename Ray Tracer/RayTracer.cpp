@@ -42,7 +42,7 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
     if (tNear != INFINITY) {
         
         // epsilon value used to a point slightly away from a plane
-        float bias = 1e-4;
+        float bias = 1e-3;
         
         Vec3 hitP = origin.add(d.times(tNear));
         
@@ -124,9 +124,9 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     TObject** objectList = new TObject*[objListSize];
     
     objectList[0] = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.2, 0);
-    objectList[1] = new Sphere(Vec3(-30, -40, 0), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0, 0.9);
+    objectList[1] = new Sphere(Vec3(-30, -40, 30), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0, 0.9);
     objectList[2] = new Sphere(Vec3(120, 80, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
-    objectList[3] = new Plane(Vec3(0, -200, 0), Vec3(0, 1, 0.2), 288*2, 288*2,
+    objectList[3] = new Plane(Vec3(0, -250, 0), Vec3(0, 1, 0.2), 288*2, 288*2,
                               Vec3(0, 0, 0), Vec3(0, 0, 0), 0.0, 0.0, texture_image);
     objectList[4] = new Sphere(Vec3(-80, -80, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
     objectList[5] = new Sphere(Vec3(120, -80, -120), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
