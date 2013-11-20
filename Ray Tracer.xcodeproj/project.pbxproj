@@ -13,7 +13,6 @@
 		BCB12DC518235EAC00C0B07F /* Ray_Tracer.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCB12DC418235EAC00C0B07F /* Ray_Tracer.1 */; };
 		BCB12DCC18235EE400C0B07F /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB12DCB18235EE400C0B07F /* GLUT.framework */; };
 		BCB12DCE18235EE800C0B07F /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB12DCD18235EE800C0B07F /* OpenGL.framework */; };
-		BCB12DD1182362F500C0B07F /* RTMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB12DCF182362F500C0B07F /* RTMath.cpp */; };
 		BCB12DD61823636700C0B07F /* filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB12DD21823636700C0B07F /* filter.cpp */; };
 		BCB12DD71823636700C0B07F /* ImageIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB12DD41823636700C0B07F /* ImageIO.cpp */; };
 		BCB12DDB182364DA00C0B07F /* RayTracer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB12DD9182364DA00C0B07F /* RayTracer.cpp */; };
@@ -43,8 +42,6 @@
 		BCB12DC418235EAC00C0B07F /* Ray_Tracer.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Ray_Tracer.1; sourceTree = "<group>"; };
 		BCB12DCB18235EE400C0B07F /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		BCB12DCD18235EE800C0B07F /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		BCB12DCF182362F500C0B07F /* RTMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTMath.cpp; sourceTree = "<group>"; };
-		BCB12DD0182362F500C0B07F /* RTMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTMath.h; sourceTree = "<group>"; };
 		BCB12DD21823636700C0B07F /* filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = filter.cpp; sourceTree = "<group>"; };
 		BCB12DD31823636700C0B07F /* filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filter.h; sourceTree = "<group>"; };
 		BCB12DD41823636700C0B07F /* ImageIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageIO.cpp; sourceTree = "<group>"; };
@@ -97,8 +94,6 @@
 				4B8BDBA11834825000E0FB27 /* Sphere.cpp */,
 				4B8BDBA21834825000E0FB27 /* Sphere.h */,
 				BCB12DC418235EAC00C0B07F /* Ray_Tracer.1 */,
-				BCB12DCF182362F500C0B07F /* RTMath.cpp */,
-				BCB12DD0182362F500C0B07F /* RTMath.h */,
 				BCB12DD9182364DA00C0B07F /* RayTracer.cpp */,
 				BCB12DDA182364DA00C0B07F /* RayTracer.h */,
 				BCB12DDC182368EF00C0B07F /* Vec3.cpp */,
@@ -161,7 +156,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BCB12DC318235EAC00C0B07F /* main.cpp in Sources */,
-				BCB12DD1182362F500C0B07F /* RTMath.cpp in Sources */,
 				4B8BDBA31834825000E0FB27 /* Sphere.cpp in Sources */,
 				BCB12DD61823636700C0B07F /* filter.cpp in Sources */,
 				BCB12DD71823636700C0B07F /* ImageIO.cpp in Sources */,

@@ -14,7 +14,15 @@
 
 using namespace std;
 
-class Sphere{
+class TObject
+{
+public:
+    virtual ~TObject() {}
+    virtual bool intersect(const Vec3 &o, const Vec3 &d, float *t) = 0;
+};
+
+
+class Sphere: public TObject{
 public:
     Sphere(void);
     Sphere(const Vec3 &c, int r, const Vec3 &sc, const Vec3 &ec, float refl, float trans);

@@ -97,12 +97,15 @@ const char* appendWithCWD(const char* fileName){
 int main(int argc, char * argv[])
 {
     
-    ImageIO * texture = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/Ray Tracer/checkerboard_red.ppm");
+    // the checkerboard image used for texturing
+    ImageIO * texture = new ImageIO(appendWithCWD("/checkerboard_red.ppm"));
     
+    // apply ray tracing and write output image to a file
     RayTracer trial1 = RayTracer();
-    trial1.render(1, "/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/Ray Tracer/testTraceSphere.ppm", texture);
+    trial1.render(1, appendWithCWD("/testTraceSphere.ppm"), texture);
     
-    ImageIO * the_image = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/Ray Tracer/testTraceSphere.ppm");
+    // read the ray traced image back and display it
+    ImageIO * the_image = new ImageIO(appendWithCWD("/testTraceSphere.ppm"));
     current_image = the_image;
     
     win_height = current_image->getHeight();

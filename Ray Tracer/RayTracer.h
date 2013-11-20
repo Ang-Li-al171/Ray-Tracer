@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include "ImageIO.h"
-#include "RTMath.h"
 #include "Sphere.h"
 //#include <GLUT/glut.h>
 
@@ -25,7 +24,7 @@ public:
     int getWidth();
     int getHeight();
     float*** getImage();
-    Vec3 trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int depth);
+    Vec3 trace(Vec3 origin, Vec3 d, TObject** sphereList, int size, int depth);
     
 private:
     //char magic_number[2];

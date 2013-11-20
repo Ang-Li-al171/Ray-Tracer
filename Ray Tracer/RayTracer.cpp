@@ -21,28 +21,29 @@ RayTracer::RayTracer(){
     height = 512;
     max = 255;
     myImage = new ImageIO(width, height, max);
-    //empty constructor
+    // other initiation in constructor?
 }
 
 RayTracer::~RayTracer(){
     delete myImage;
 }
 
-Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int depth) {
-    //take record of smallest t
+Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** sphereList, int size, int depth) {
+
+    //take record of smallest t, for the nearest object in the direction of the ray
     float t = INFINITY;
     float tNear = INFINITY;
     Sphere* hitSphere;
-    
     for (int i = 0; i<size; i++) {
         if (sphereList[i]->intersect(origin, d, &t)) {
             if (t < tNear){
                 tNear = t;
-                hitSphere = sphereList[i];
+                hitSphere = (Sphere*) sphereList[i];
             }
         }
     }
     
+    // if there's an intersection with an object
     if (tNear != INFINITY) {
         
         Vec3 surfaceColor = Vec3(0, 0, 0);
@@ -57,7 +58,9 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
             inside = true;
         }
         
+        // if reflection or refraction is needed, recurse
         if (depth < MAX_RAY_DEPTH && (hitSphere->getRefl() > 0 || hitSphere->getTrans() >0)){
+            
             Vec3 reflectedRay = d.diff(normalizedN.times(2).times(d.dot(normalizedN)));
             
             Vec3 planeA = Vec3(0, -200, 0);
@@ -131,7 +134,7 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
                         if (sphereList[k]->intersect(originOut, refractionDirOut, &t0)) {
                             if (t0 < tOutside) {
                                 tOutside = t0;
-                                refraSphere = sphereList[k];
+                                refraSphere = (Sphere*)sphereList[k];
                             }
                         }
                     }
@@ -188,7 +191,9 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, Sphere** sphereList, int size, int de
             
         }
         
-    } else {
+    }
+    // the ray doesn't intersect any object in the list
+    else {
         Vec3 planeA = Vec3(0, -200, 0);
         Vec3 planeN = Vec3(0, 1, 0.1);
         if (d.dot(planeN) != 0) {    //now set reflection to plane (hard code)
@@ -225,18 +230,16 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     // shoot a ray in d=(0,0,-1) direction from each of the pixels
     Vec3 d = Vec3(0, 0, -1);
     int sphereSize = 3;
-    Sphere** sphereList = new Sphere*[sphereSize];
-    Sphere* sphere = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.2, 0);
-    Sphere* sphere2 = new Sphere(Vec3(-73, -50, -30), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.2, 0.3);
-    Sphere* sphere3 = new Sphere(Vec3(100, 100, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
-    sphereList[0] = sphere;
-    sphereList[1] = sphere2;
-    sphereList[2] = sphere3;
+    TObject** objectList = new TObject*[sphereSize];
+    objectList[0] = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.2, 0);
+    objectList[1] = new Sphere(Vec3(-73, -50, -30), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.2, 0.3);
+    objectList[2] = new Sphere(Vec3(100, 100, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
     
+    // ray trace every single pixel for the chosen type of projection
     for (int i=0;i<height;i++){
         for (int j=0;j<width;j++){
             Vec3 o = Vec3(j-width/2,height/2-i,0);
-            Vec3 color = trace(o, d, sphereList, sphereSize, 1);
+            Vec3 color = trace(o, d, objectList, sphereSize, 0);
                 
             image[i][j][0] = color.getElement(0);
             image[i][j][1] = color.getElement(1);
@@ -244,6 +247,10 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
         }
     }
     myImage->writeImage(filePath);
+    
+    for (int i=0; i<sphereSize; i++){
+        delete objectList[i];
+    }
     return true;
 }
 
