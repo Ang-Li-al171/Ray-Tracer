@@ -58,8 +58,8 @@ bool Sphere::intersect(const Vec3 &o, const Vec3 &d, float *t){
 Vec3 Sphere::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     
     // use this as default, need to add as parameters in constructor
-    float Diffuse = 0.90;
-    float Ambient = 0.10;
+    float Diffuse = 1.20;
+    float Ambient = 0.30;
     float Specular = 0.8;
 //    float transmission = 1;
     
@@ -88,10 +88,11 @@ Vec3 Sphere::getN(const Vec3 &hitP, const Vec3 &d){
     Vec3 P = Vec3(hitP);
     Vec3 rayDir = Vec3(d);
     Vec3 n = P.diff(center).unit();
-    if (rayDir.dot(n)<0)
+    if (rayDir.dot(n) <= 0)
         return n;
-    else
+    else{
         return n.times(-1);
+    }
 }
 
 bool Sphere::rayInside(const Vec3 &hitP, const Vec3 &d){

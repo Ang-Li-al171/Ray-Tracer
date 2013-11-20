@@ -8,7 +8,7 @@
 
 #include "RayTracer.h"
 
-int MAX_RAY_DEPTH = 3;
+int MAX_RAY_DEPTH = 5;
 float*** texture_image;
 
 RayTracer::RayTracer(){
@@ -25,6 +25,8 @@ RayTracer::~RayTracer(){
 
 Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int depth) {
     
+    d = d.unit();
+    
     //take record of smallest t, for the nearest object in the direction of the ray
     float t = INFINITY;
     float tNear = INFINITY;
@@ -39,7 +41,7 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
     }
     
     // if there's an intersection with an object
-    if (tNear != INFINITY) {
+    if (tNear < INFINITY) {
         
         // epsilon value used to a point slightly away from a plane
         float bias = 1e-3;
@@ -49,8 +51,8 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
         
         // color from light and surface
         
-        Light l = Light(Vec3(181, 126, 220), Vec3(150, 150, 150),
-                        Vec3(255, 255, 255) ,Vec3(200, 70, 50));
+        Light l = Light(Vec3(181, 126, 220), Vec3(100, 100, 100),
+                        Vec3(255, 255, 255) ,Vec3(100, 170, 100));
         Vec3 LightColor = hitObj->getLightAt(d, hitP, l);
 
         
@@ -59,7 +61,9 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
             float t0;
             if (objList[i]->intersect(hitP.add(hitObj->getN(hitP, d).times(bias)),
                                       l.getLightSource().diff(hitP), &t0)) {
-                LightColor = l.getAmbient().times(1.0/255.0).times(0.10);
+                // need a better shadowing algo for transparent objects
+                //LightColor = l.getAmbient().times(1.0/255.0).times(0.10).add(LightColor.times(objList[i]->getTrans()));
+                LightColor = l.getAmbient().times(1.0/255.0).times(0.30);
                 break;
             }
         }
@@ -68,10 +72,9 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
         Vec3 reflectionColor = Vec3(0, 0, 0);
         if (depth < MAX_RAY_DEPTH && (hitObj->getRefl() > 0)){
             
-            Vec3 surfaceColor = Vec3(0, 0, 0);
             Vec3 n = hitObj->getN(hitP, d);
             
-            Vec3 reflectedRay = d.diff(n.times(2).times(d.dot(n)));
+            Vec3 reflectedRay = d.diff(n.times(2.0).times(d.dot(n)));
             
             reflectionColor = trace(hitP.add(n.times(bias)), reflectedRay,
                                          objList, size, depth+1);
@@ -83,13 +86,15 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
         if (depth < MAX_RAY_DEPTH && (hitObj->getTrans() > 0)){
             
             Vec3 n = hitObj->getN(hitP, d);
-
-            float ior = 1.4;   //this is n/nt
-            float eta = (hitObj->rayInside(hitP, d)) ? 1.0/ior : ior;
-            float cosi = n.times(-1).dot(d.unit());
+            
+            bool inside = hitObj->rayInside(hitP, d);
+            float nNT = 1.0/1.6;   //this is n/nt
+            float eta = (inside) ? 1.0/nNT : nNT;
+            float cosi = n.times(-1.0).dot(d.unit());
             float cosiIn;
-            if ((1 - eta * eta * (1 - cosi * cosi)) >0) {
-                cosiIn = sqrt(1 - eta * eta * (1 - cosi * cosi)); //this is cosi'
+            if ((1.0 - eta * eta * (1.0 - cosi * cosi)) >0) {
+                
+                cosiIn = sqrt(1.0 - eta * eta * (1.0 - cosi * cosi)); //this is cosi'
                 
                 Vec3 originIn = hitP.diff(n.times(bias));
                 
@@ -97,8 +102,23 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
                 
                 refractionColor = trace(originIn, refractionDirIn, objList, size, depth+1);
                 
-            } else {
-                refractionColor = Vec3(0, 0, 0);
+            } else if (inside){
+                // need to fix total internal reflection
+                Vec3 n = hitObj->getN(hitP, d);
+                
+                Vec3 reflectedRay = d.diff(n.times(2.0).times(d.dot(n)));
+                
+                refractionColor = trace(hitP.add(n.times(bias)), reflectedRay,
+                                        objList, size, depth+1);
+                
+                // if rays didn't come out of the object due to total internal reflection
+                if (depth == MAX_RAY_DEPTH-1){
+                    printf("Stuck inside");
+                }
+            }
+            else{
+                // for debugging purposes
+                refractionColor = Vec3(255, 0, 0);
             }
         }
         
@@ -123,13 +143,13 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     
     TObject** objectList = new TObject*[objListSize];
     
-    objectList[0] = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.2, 0);
-    objectList[1] = new Sphere(Vec3(-30, -40, 30), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0, 0.9);
-    objectList[2] = new Sphere(Vec3(120, 80, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
-    objectList[3] = new Plane(Vec3(0, -250, 0), Vec3(0, 1, 0.2), 288*2, 288*2,
+    objectList[0] = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.5, 0);
+    objectList[1] = new Sphere(Vec3(-20, -150, 0), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.0, 0.8);
+    objectList[2] = new Sphere(Vec3(160, 50, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.1, 0);
+    objectList[3] = new Plane(Vec3(0, -200, 0), Vec3(0, 1, 0.1), 288*2, 288*2,
                               Vec3(0, 0, 0), Vec3(0, 0, 0), 0.0, 0.0, texture_image);
-    objectList[4] = new Sphere(Vec3(-80, -80, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
-    objectList[5] = new Sphere(Vec3(120, -80, -120), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
+    objectList[4] = new Sphere(Vec3(-80, -80, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.1, 0);
+    objectList[5] = new Sphere(Vec3(120, -80, -120), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.3, 0);
     
     // ray trace every single pixel for the chosen type of projection
     // this is orthographic projection
@@ -145,10 +165,12 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
 //    }
     
     // this is perspective projection
-    Vec3 o = Vec3(0, 0, 200);
+    Vec3 o = Vec3(0, -50, 200);
     for (int i=0;i<height;i++){
         for (int j=0;j<width;j++){
-            d = Vec3(j-width/2,height/2-i,0).diff(o);
+            
+            d = Vec3(j-((float)width)/2.0, ((float)height)/2.0-i, 0.0).diff(o);
+            
             Vec3 color = trace(o, d, objectList, objListSize, 0);
             
             image[i][j][0] = color.getElement(0);

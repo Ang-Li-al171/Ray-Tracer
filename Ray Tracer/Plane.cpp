@@ -77,8 +77,8 @@ Vec3 Plane::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     Vec3 textureColor = Vec3(texture[x][y][0], texture[x][y][1], texture[x][y][2]);
     
     // use this as default, need to add as parameters in constructor
-    float Diffuse = 0.90;
-    float Ambient = 0.10;
+    float Diffuse = 1.20;
+    float Ambient = 0.30;
     float Specular = 0.8;
     //    float transmission = 1;
     
@@ -106,7 +106,7 @@ Vec3 Plane::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
 Vec3 Plane::getN(const Vec3 &hitP, const Vec3 &d){
     Vec3 rayDir = Vec3(d);
     Vec3 nNorm = n.unit();
-    if (rayDir.dot(nNorm) < 0)
+    if (rayDir.dot(nNorm) <= 0)
         return nNorm;
     else
         return nNorm.times(-1);
