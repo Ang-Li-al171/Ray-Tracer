@@ -4,41 +4,15 @@
    version = "1.0">
    <FileBreakpoints>
       <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "Ray Tracer/Sphere.cpp"
-         timestampString = "406617998.058009"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "72"
-         endingLineNumber = "72"
-         landmarkName = "Sphere::getLightAt(const Vec3 &amp;d, const Vec3 &amp;hitP, Light &amp;l)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Ray Tracer/Sphere.cpp"
-         timestampString = "406618626.240808"
+         timestampString = "406623584.931552"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "94"
-         endingLineNumber = "94"
-         landmarkName = "Sphere::getLightAt(const Vec3 &amp;d, const Vec3 &amp;hitP, Light &amp;l)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "Ray Tracer/Sphere.cpp"
-         timestampString = "406618624.172641"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "93"
-         endingLineNumber = "93"
+         startingLineNumber = "83"
+         endingLineNumber = "83"
          landmarkName = "Sphere::getLightAt(const Vec3 &amp;d, const Vec3 &amp;hitP, Light &amp;l)"
          landmarkType = "5">
       </FileBreakpoint>

@@ -64,6 +64,35 @@ bool Plane::intersect(const Vec3 &o, const Vec3 &d, float *t){
     return false;
 }
 
+Vec3 Plane::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
+    
+    Vec3 planeHitP = Vec3(hitP);
+    
+    int x = fabs(planeHitP.getElement(0));
+    int y = fabs(planeHitP.getElement(2));
+    
+    x = x%288;
+    y = y%288;
+    
+    // now there's no light for the plane, can easily implement it here...
+    
+    return Vec3(texture[x][y][0], texture[x][y][1], texture[x][y][2]);
+
+}
+
+Vec3 Plane::getN(const Vec3 &hitP, const Vec3 &d){
+    Vec3 rayDir = Vec3(d);
+    Vec3 nNorm = n.unit();
+    if (rayDir.dot(nNorm) < 0)
+        return nNorm;
+    else
+        return nNorm.times(-1);
+}
+
+bool Plane::rayInside(const Vec3 &hitP, const Vec3 &d){
+    return false;
+}
+
 Vec3 Plane::getCenter(void){
     return center;
 }

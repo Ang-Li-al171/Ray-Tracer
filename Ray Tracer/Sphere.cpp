@@ -58,8 +58,8 @@ bool Sphere::intersect(const Vec3 &o, const Vec3 &d, float *t){
 Vec3 Sphere::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     
     // use this as default, need to add as parameters in constructor
-    float Diffuse = 1.0;
-    float Ambient = 0.3;
+    float Diffuse = 0.90;
+    float Ambient = 0.10;
     float Specular = 0.8;
 //    float transmission = 1;
     
@@ -71,15 +71,6 @@ Vec3 Sphere::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     Vec3 n = hitPoint.diff(center).unit();
     Vec3 h = rayDirection.times(-1).add(lightDirection).unit();
     
-//    for (int i = 0; i<size; i++) {
-//        float t0;
-//        if (sphereList[i]->intersect(hitP.add(normalizedN.times(bias)), lightDirection, &t0)) {
-//            transmission = 0;
-//            break;
-//        }
-//    }
-    
-    
     Vec3 LDiffuse = l.getDiffuse().times(Diffuse).times(n.dot(lightDirection)).clamp(0.0, 255.0);
     
     Vec3 LSpecular = Vec3(0, 0, 0);
@@ -89,10 +80,28 @@ Vec3 Sphere::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     
     Vec3 LAmbient = l.getAmbient().times(Ambient);
     
-    Vec3 out = LDiffuse.add(LSpecular).add(LAmbient).times(1.0/255.0);
+    return LDiffuse.add(LSpecular).add(LAmbient).times(1.0/255.0);
     
-    return out;
-    
+}
+
+Vec3 Sphere::getN(const Vec3 &hitP, const Vec3 &d){
+    Vec3 P = Vec3(hitP);
+    Vec3 rayDir = Vec3(d);
+    Vec3 n = P.diff(center).unit();
+    if (rayDir.dot(n)<0)
+        return n;
+    else
+        return n.times(-1);
+}
+
+bool Sphere::rayInside(const Vec3 &hitP, const Vec3 &d){
+    Vec3 P = Vec3(hitP);
+    Vec3 rayDir = Vec3(d);
+    Vec3 n = P.diff(center).unit();
+    if (rayDir.dot(n) > 0)
+        return true;
+    else
+        return false;
 }
 
 Vec3 Sphere::getCenter() {

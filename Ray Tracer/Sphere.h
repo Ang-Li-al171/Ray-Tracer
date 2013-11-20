@@ -22,9 +22,12 @@ public:
     virtual bool intersect(const Vec3 &o, const Vec3 &d, float *t) = 0;
 //    virtual Vec3 getSurfaceColor(void);
 //    virtual Vec3 getEmissionColor(void);
-//    virtual float getRefl(void);
-//    virtual float getTrans(void);
-//    virtual Vec3 getCenter(void);
+    virtual float getRefl(void) = 0;
+    virtual float getTrans(void) = 0;
+    virtual Vec3 getN(const Vec3 &hitP, const Vec3 &d) = 0;
+    virtual Vec3 getCenter(void) = 0;
+    virtual Vec3 getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l) = 0;
+    virtual bool rayInside(const Vec3 &hitP, const Vec3 &d) = 0;
 };
 
 
@@ -37,9 +40,11 @@ public:
     Vec3 getCenter(void);
     float getRefl(void);
     float getTrans(void);
+    Vec3 getN(const Vec3 &hitP, const Vec3 &d);
     Vec3 getSurfaceColor(void);
     Vec3 getEmissionColor(void);
     Vec3 getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l);
+    bool rayInside(const Vec3 &hitP, const Vec3 &d);
     
 private:
     Vec3 center;
