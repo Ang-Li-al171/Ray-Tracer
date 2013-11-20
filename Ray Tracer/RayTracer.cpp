@@ -38,7 +38,6 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
         }
     }
     
-    
     // if there's an intersection with an object
     if (tNear != INFINITY) {
         
@@ -78,8 +77,6 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
                                          objList, size, depth+1);
             
         }
-        
-
         
         // color from refraction recursive
         Vec3 refractionColor = Vec3(0, 0, 0);
@@ -122,15 +119,17 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     // shoot a ray in d=(0,0,-1) direction from each of the pixels
     Vec3 d = Vec3(0, 0, -1);
     
-    int objListSize = 4;
+    int objListSize = 6;
     
     TObject** objectList = new TObject*[objListSize];
     
-    objectList[0] = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.1, 0);
+    objectList[0] = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.2, 0);
     objectList[1] = new Sphere(Vec3(-30, -40, 0), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.0, 1.0);
-    objectList[2] = new Sphere(Vec3(120, 80, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.1, 0);
+    objectList[2] = new Sphere(Vec3(120, 80, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
     objectList[3] = new Plane(Vec3(0, -200, 0), Vec3(0, 1, 0.2), 288*2, 288*2,
                               Vec3(0, 0, 0), Vec3(0, 0, 0), 0.0, 0.0, texture_image);
+    objectList[4] = new Sphere(Vec3(-80, -80, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
+    objectList[5] = new Sphere(Vec3(120, -80, -120), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
     
     // ray trace every single pixel for the chosen type of projection
     for (int i=0;i<height;i++){

@@ -74,9 +74,32 @@ Vec3 Plane::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     x = x%288;
     y = y%288;
     
-    // now there's no light for the plane, can easily implement it here...
+    Vec3 textureColor = Vec3(texture[x][y][0], texture[x][y][1], texture[x][y][2]);
     
-    return Vec3(texture[x][y][0], texture[x][y][1], texture[x][y][2]);
+    // use this as default, need to add as parameters in constructor
+    float Diffuse = 0.90;
+    float Ambient = 0.10;
+    float Specular = 0.8;
+    //    float transmission = 1;
+    
+    Vec3 lightSource = l.getLightSource();
+    Vec3 hitPoint = Vec3(hitP);
+    
+    Vec3 rayDirection = Vec3(d).unit();
+    Vec3 lightDirection = lightSource.diff(hitPoint).unit();
+    Vec3 n = getN(hitP, d);
+    Vec3 h = rayDirection.times(-1).add(lightDirection).unit();
+    
+    Vec3 LDiffuse = l.getDiffuse().times(Diffuse).times(n.dot(lightDirection)).clamp(0.0, 255.0);
+    
+    Vec3 LSpecular = Vec3(0, 0, 0);
+    if (n.dot(h)>0){
+        LSpecular = l.getSpecular().times(Specular).times(pow(n.dot(h), 70));
+    }
+    
+    Vec3 LAmbient = l.getAmbient().times(Ambient);
+    
+    return LDiffuse.add(LSpecular).add(LAmbient).times(1.0/255.0).times(0.5).add(textureColor.times(0.5));
 
 }
 
