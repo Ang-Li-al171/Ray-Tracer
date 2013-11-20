@@ -32,7 +32,7 @@ void init( void ){
 
 void idle( void ){
     
-    glutPostRedisplay();
+    //glutPostRedisplay();
     
 }
 

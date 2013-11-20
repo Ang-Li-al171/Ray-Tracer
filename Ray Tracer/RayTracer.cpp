@@ -8,7 +8,7 @@
 
 #include "RayTracer.h"
 
-int MAX_RAY_DEPTH = 2;
+int MAX_RAY_DEPTH = 3;
 float*** texture_image;
 
 RayTracer::RayTracer(){
@@ -124,7 +124,7 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     TObject** objectList = new TObject*[objListSize];
     
     objectList[0] = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.2, 0);
-    objectList[1] = new Sphere(Vec3(-30, -40, 0), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.0, 1.0);
+    objectList[1] = new Sphere(Vec3(-30, -40, 0), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0, 0.9);
     objectList[2] = new Sphere(Vec3(120, 80, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
     objectList[3] = new Plane(Vec3(0, -200, 0), Vec3(0, 1, 0.2), 288*2, 288*2,
                               Vec3(0, 0, 0), Vec3(0, 0, 0), 0.0, 0.0, texture_image);
@@ -132,9 +132,23 @@ bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
     objectList[5] = new Sphere(Vec3(120, -80, -120), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.2, 0);
     
     // ray trace every single pixel for the chosen type of projection
+    // this is orthographic projection
+//    for (int i=0;i<height;i++){
+//        for (int j=0;j<width;j++){
+//            Vec3 o = Vec3(j-width/2,height/2-i,0);
+//            Vec3 color = trace(o, d, objectList, objListSize, 0);
+//            
+//            image[i][j][0] = color.getElement(0);
+//            image[i][j][1] = color.getElement(1);
+//            image[i][j][2] = color.getElement(2);
+//        }
+//    }
+    
+    // this is perspective projection
+    Vec3 o = Vec3(0, 0, 200);
     for (int i=0;i<height;i++){
         for (int j=0;j<width;j++){
-            Vec3 o = Vec3(j-width/2,height/2-i,0);
+            d = Vec3(j-width/2,height/2-i,0).diff(o);
             Vec3 color = trace(o, d, objectList, objListSize, 0);
             
             image[i][j][0] = color.getElement(0);
