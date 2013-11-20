@@ -66,7 +66,7 @@ Vec3 Sphere::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     Vec3 lightSource = l.getLightSource();
     Vec3 hitPoint = Vec3(hitP);
     
-    Vec3 rayDirection = Vec3(d);
+    Vec3 rayDirection = Vec3(d).unit();
     Vec3 lightDirection = lightSource.diff(hitPoint).unit();
     Vec3 n = hitPoint.diff(center).unit();
     Vec3 h = rayDirection.times(-1).add(lightDirection).unit();
@@ -83,12 +83,15 @@ Vec3 Sphere::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     Vec3 LDiffuse = l.getDiffuse().times(Diffuse).times(n.dot(lightDirection)).clamp(0.0, 255.0);
     
     Vec3 LSpecular = Vec3(0, 0, 0);
-    if (n.dot(h)>0)
+    if (n.dot(h)>0){
         LSpecular = l.getSpecular().times(Specular).times(pow(n.dot(h), 70));
+    }
     
     Vec3 LAmbient = l.getAmbient().times(Ambient);
     
-    return LDiffuse.add(LSpecular).add(LAmbient).times(1/255);
+    Vec3 out = LDiffuse.add(LSpecular).add(LAmbient).times(1.0/255.0);
+    
+    return out;
     
 }
 

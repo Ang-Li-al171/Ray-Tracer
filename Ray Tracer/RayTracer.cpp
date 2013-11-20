@@ -143,7 +143,7 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** sphereList, int size, int d
 
             
         } else {    //diffuse/max depth -> no ray tracing any further
-            
+        
             Light l = Light(Vec3(200, 200, 255), Vec3(100, 100, 255),Vec3(255, 255, 255) ,Vec3(200, 70, 50));
 
             Vec3 LightColor = hitSphere->getLightAt(d, hitP, l);

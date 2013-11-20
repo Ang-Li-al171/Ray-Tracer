@@ -8,11 +8,24 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Ray Tracer/Sphere.cpp"
-         timestampString = "406609572.930097"
+         timestampString = "406617998.058009"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "90"
-         endingLineNumber = "90"
+         startingLineNumber = "72"
+         endingLineNumber = "72"
+         landmarkName = "Sphere::getLightAt(const Vec3 &amp;d, const Vec3 &amp;hitP, Light &amp;l)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "Ray Tracer/Sphere.cpp"
+         timestampString = "406618626.240808"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "94"
+         endingLineNumber = "94"
          landmarkName = "Sphere::getLightAt(const Vec3 &amp;d, const Vec3 &amp;hitP, Light &amp;l)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -21,25 +34,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Ray Tracer/Sphere.cpp"
-         timestampString = "406609766.013274"
+         timestampString = "406618624.172641"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "68"
-         endingLineNumber = "68"
+         startingLineNumber = "93"
+         endingLineNumber = "93"
          landmarkName = "Sphere::getLightAt(const Vec3 &amp;d, const Vec3 &amp;hitP, Light &amp;l)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "Ray Tracer/RayTracer.cpp"
-         timestampString = "406609913.31746"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "150"
-         endingLineNumber = "150"
-         landmarkName = "RayTracer::trace(Vec3 origin, Vec3 d, TObject** sphereList, int size, int depth)"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>
