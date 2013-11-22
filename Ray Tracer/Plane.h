@@ -20,7 +20,7 @@ public:
     Plane(const Vec3 &ct, const Vec3 &normal, const Vec3 &xDir, const Vec3 &yDir,
           int w, int h,
           const Vec3 &sc, const Vec3 &ec, float refl, float trans,
-          float*** textureImage);
+          float*** textureImage, bool causeShadow);
     ~Plane(void);
     bool intersect(const Vec3 &o, const Vec3 &d, float *t);
     Vec3 getCenter(void);
@@ -31,9 +31,11 @@ public:
     Vec3 getEmissionColor(void);
     Vec3 getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l);
     bool rayInside(const Vec3 &hitP, const Vec3 &d);
+    bool causeShadow();
     
 private:
     float*** texture;
+    bool causeShadowBool;
     Vec3 center;
     Vec3 n;
     Vec3 x;

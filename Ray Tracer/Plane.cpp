@@ -18,8 +18,10 @@ Plane::Plane(void){
 
 Plane::Plane(const Vec3 &ct, const Vec3 &normal, const Vec3 &xDir, const Vec3 &yDir,
              int w, int h,
-             const Vec3 &sc, const Vec3 &ec, float refl, float trans,
-             float*** textureImage){
+             const Vec3 &sc, const Vec3 &ec,
+             float refl, float trans,
+             float*** textureImage, bool causeShadow){
+    causeShadowBool = causeShadow;
     center = Vec3(ct);
     n = Vec3(normal).unit();
     x = Vec3(xDir).unit();
@@ -35,6 +37,10 @@ Plane::Plane(const Vec3 &ct, const Vec3 &normal, const Vec3 &xDir, const Vec3 &y
 
 Plane::~Plane(void){
     
+}
+
+bool Plane::causeShadow(){
+    return causeShadowBool;
 }
 
 bool Plane::intersect(const Vec3 &o, const Vec3 &d, float *t){
@@ -55,7 +61,7 @@ bool Plane::intersect(const Vec3 &o, const Vec3 &d, float *t){
             float xposi = fabs(planeHitP.diff(center).dot(x));
             float yposi = fabs(planeHitP.diff(center).dot(y));
             
-            if (xposi < width/2 && yposi < height/2){
+            if (xposi < width/2-1 && yposi < height/2-1){
                 *t = tForPlaneHit;
                 return true;
             }
@@ -73,9 +79,9 @@ Vec3 Plane::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     int xposi = planeHitP.diff(center).dot(x) + width/2;
     int yposi = planeHitP.diff(center).dot(y) + height/2;
     
-    Vec3 textureColor = Vec3(texture[xposi][yposi][0],
-                             texture[xposi][yposi][1],
-                             texture[xposi][yposi][2]);
+    Vec3 textureColor = Vec3(texture[yposi][xposi][0],
+                             texture[yposi][xposi][1],
+                             texture[yposi][xposi][2]);
     
     // use this as default, need to add as parameters in constructor
     float Diffuse = 1.20;

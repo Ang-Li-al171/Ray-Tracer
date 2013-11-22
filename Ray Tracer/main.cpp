@@ -43,7 +43,6 @@ void drawImage( void ){
         glRasterPos2i(0, 0);
         glDrawPixels(current_image->getWidth(), current_image->getHeight(), GL_RGB,
                      GL_FLOAT, current_image->getImageDisplayArray());
-
     }
 
 }
@@ -55,14 +54,6 @@ void display( void )
     glOrtho(0, win_width, 0, win_height, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    
-//    glMatrixMode(GL_PROJECTION);
-//    glLoadIdentity();
-//    gluPerspective(80, GLfloat(win_width)/win_height, 1, 40);
-//    glMatrixMode(GL_MODELVIEW);
-//    glLoadIdentity();
-//    gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
-//    glClear(GL_COLOR_BUFFER_BIT);
     
     drawImage();
     
@@ -97,24 +88,64 @@ const char* appendWithCWD(const char* fileName){
 int main(int argc, char * argv[])
 {
     
-    // the checkerboard image used for texturing
-    ImageIO * texture = new ImageIO(appendWithCWD("/WoodenFloor.ppm"));
+    int objListSize = 9;
     
-    
-    int objListSize = 6;
+    // import the images used for texturing
+    ImageIO** texList = new ImageIO*[objListSize];
+    texList[0] = new ImageIO(appendWithCWD("/WoodenFloor.ppm"));
+    texList[1] = new ImageIO(appendWithCWD("/RoomBG.ppm"));
+    texList[1] = texList[1]->scale(1.5, 1.5);
+    texList[2] = new ImageIO(appendWithCWD("/RoomFront2.ppm"));
+    texList[3] = new ImageIO(appendWithCWD("/WallTextureTiled.ppm"));
+    texList[4] = new ImageIO(appendWithCWD("/WallTexture2.ppm"));
+    texList[5] = new ImageIO(appendWithCWD("/ball.ppm"));
     
     TObject** objectList = new TObject*[objListSize];
     
-    objectList[0] = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 1.0, 0);
-    objectList[1] = new Sphere(Vec3(-20, -150, 0), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.0, 0.8);
-    objectList[2] = new Sphere(Vec3(160, 50, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.1, 0);
-    objectList[3] = new Sphere(Vec3(-80, -80, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.1, 0);
-    objectList[4] = new Sphere(Vec3(120, -80, -120), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.3, 0);
-    objectList[5] = new Plane(Vec3(0, -200, 0), Vec3(0, 1, 0.1),
-                              Vec3(1, 0, 0), Vec3(0, 0.1, -1),
-                              texture->getWidth(), texture->getHeight(),
+    objectList[0] = new Sphere(Vec3(-55, 0, 50), 40, 0.0, 0.8, true);
+    objectList[1] = new Sphere(Vec3(150, -145, 0), 50, Vec3(0, 0, 0), Vec3(0, 0, 0),
+                               0, 0,
+                               texList[5]->getImage(), texList[5]->getWidth(),
+                               texList[5]->getHeight(), true);
+    objectList[2] = new Sphere(Vec3(0, -150, 50), 50, 0.7, 0, true);
+    
+    // IMPORTANT: define x and y directions for the plane, x is rightwards, y is DOWNWARDS
+    //room front
+    objectList[3] = new Plane(Vec3(0, texList[2]->getHeight()/2-200,200), Vec3(0, 0, -1),
+                              Vec3(-1, 0, 0), Vec3(0, -1, 0),
+                              texList[2]->getWidth(), texList[2]->getHeight(),
                               Vec3(0, 0, 0), Vec3(0, 0, 0),
-                              0.0, 0.0, texture->getImage());
+                              0.0, 0.0, texList[2]->getImage(), false);
+    //wooden floor
+    objectList[4] = new Plane(Vec3(0, -200, 0), Vec3(0, 1, 0),
+                              Vec3(1, 0, 0), Vec3(0, 0, 1),
+                              texList[0]->getWidth(), texList[0]->getHeight(),
+                              Vec3(0, 0, 0), Vec3(0, 0, 0),
+                              0.0, 0.0, texList[0]->getImage(), false);
+    //roomBG
+    objectList[5] = new Plane(Vec3(0, texList[1]->getHeight()/2-200, -350), Vec3(0, 0, 1),
+                              Vec3(1, 0, 0), Vec3(0, -1, 0),
+                              texList[1]->getWidth(), texList[1]->getHeight(),
+                              Vec3(0, 0, 0), Vec3(0, 0, 0),
+                              0.0, 0.0, texList[1]->getImage(), false);
+    //leftWall
+    objectList[6] = new Plane(Vec3(-400, texList[3]->getHeight()/2-200, 0), Vec3(1, 0, 0),
+                              Vec3(0, 0, -1), Vec3(0, -1, 0),
+                              texList[3]->getWidth(), texList[3]->getHeight(),
+                              Vec3(0, 0, 0), Vec3(0, 0, 0),
+                              0.0, 0.0, texList[3]->getImage(), false);
+    //rightWall
+    objectList[7] = new Plane(Vec3(400, texList[3]->getHeight()/2-200, 0), Vec3(-1, 0, 0),
+                              Vec3(0, 0, 1), Vec3(0, -1, 0),
+                              texList[3]->getWidth(), texList[3]->getHeight(),
+                              Vec3(0, 0, 0), Vec3(0, 0, 0),
+                              0.0, 0.0, texList[3]->getImage(), false);
+    //roof
+    objectList[8] = new Plane(Vec3(0, texList[1]->getHeight(), 0), Vec3(0, -1, 0),
+                              Vec3(1, 0, 0), Vec3(0, 0, -1),
+                              texList[4]->getWidth(), texList[4]->getHeight(),
+                              Vec3(0, 0, 0), Vec3(0, 0, 0),
+                              0.0, 0.0, texList[4]->getImage(), false);
     
     // apply ray tracing and write output image to a file
     RayTracer trial1 = RayTracer();
@@ -147,6 +178,10 @@ int main(int argc, char * argv[])
     
     delete the_image;
     delete current_image;
+    for (int i=0; i<objListSize; i++){
+        delete objectList[i];
+        delete texList[i];
+    }
     
     return 0;
 }

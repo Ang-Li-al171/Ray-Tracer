@@ -8,11 +8,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Ray Tracer/Sphere.cpp"
-         timestampString = "406623584.931552"
+         timestampString = "406801605.868651"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "83"
-         endingLineNumber = "83"
+         startingLineNumber = "126"
+         endingLineNumber = "126"
          landmarkName = "Sphere::getLightAt(const Vec3 &amp;d, const Vec3 &amp;hitP, Light &amp;l)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -21,11 +21,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Ray Tracer/Plane.cpp"
-         timestampString = "406792822.158375"
+         timestampString = "406800662.462192"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "74"
-         endingLineNumber = "74"
+         startingLineNumber = "80"
+         endingLineNumber = "80"
          landmarkName = "Plane::getLightAt(const Vec3 &amp;d, const Vec3 &amp;hitP, Light &amp;l)"
          landmarkType = "5">
       </FileBreakpoint>

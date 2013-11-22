@@ -12,8 +12,8 @@
 enum{PERSPECTIVE, ORTHOGRAPHIC};
 
 RayTracer::RayTracer(){
-    width = 512;
-    height = 512;
+    width = 1024;
+    height = 768;
     max = 255;
     MAX_RAY_DEPTH = 5;
     myImage = new ImageIO(width, height, max);
@@ -53,15 +53,14 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
         
         // color from light and surface
         Light l = Light(Vec3(255, 255, 255), Vec3(100, 100, 100),
-                        Vec3(255, 255, 255) ,Vec3(100, 170, 100));
+                        Vec3(255, 255, 255) ,Vec3(10, 170, 100).times(3));
         Vec3 LightColor = hitObj->getLightAt(d, hitP, l);
 
         
         // if path to light source blocked, use shadow color
         for (int i = 0; i<size; i++) {
             float t0;
-            if (objList[i]->intersect(hitP.add(hitObj->getN(hitP, d).times(bias)),
-                                      l.getLightSource().diff(hitP), &t0)) {
+            if (objList[i]->causeShadow() && objList[i]->intersect(hitP.add(hitObj->getN(hitP, d).times(bias)), l.getLightSource().diff(hitP), &t0)) {
                 // need a better shadowing algo for transparent objects here
                 //LightColor = l.getAmbient().times(1.0/255.0).times(0.10).add(LightColor.times(objList[i]->getTrans()));
                 LightColor = l.getAmbient().times(1.0/255.0).times(0.30);
@@ -89,7 +88,7 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
             Vec3 n = hitObj->getN(hitP, d);
             
             bool inside = hitObj->rayInside(hitP, d);
-            float nNT = 1.0/1.6;   //this is n/nt
+            float nNT = 1.0/2.0;   //this is n/nt
             float eta = (inside) ? 1.0/nNT : nNT;
             float cosi = n.times(-1.0).dot(d.unit());
             float cosiIn;
@@ -145,7 +144,7 @@ bool RayTracer::render(int objName, const char* filePath,
             // this is perspective projection
             
             // camera location
-            Vec3 persOrigin = Vec3(0, -50, 200);
+            Vec3 persOrigin = Vec3(0, -100, 200);
             
             for (int i=0;i<height;i++){
                 for (int j=0;j<width;j++){
@@ -188,9 +187,6 @@ bool RayTracer::render(int objName, const char* filePath,
     
     myImage->writeImage(filePath);
     
-    for (int i=0; i<numObj; i++){
-        delete objectList[i];
-    }
     return true;
 }
 
