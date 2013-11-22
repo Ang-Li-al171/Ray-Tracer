@@ -35,6 +35,21 @@ Plane::Plane(const Vec3 &ct, const Vec3 &normal, const Vec3 &xDir, const Vec3 &y
     texture = textureImage;
 }
 
+Plane::Plane(const Vec3 &ct, const Vec3 &normal, const Vec3 &xDir, const Vec3 &yDir,
+             int w, int h,
+             float refl, float trans,
+             bool causeShadow){
+    causeShadowBool = causeShadow;
+    center = Vec3(ct);
+    n = Vec3(normal).unit();
+    x = Vec3(xDir).unit();
+    y = Vec3(yDir).unit();
+    width = w;
+    height = h;
+    reflection = refl;
+    transparency = trans;
+}
+
 Plane::~Plane(void){
     
 }
@@ -75,14 +90,18 @@ Vec3 Plane::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     
     Vec3 planeHitP = Vec3(hitP);
     
-    // projection of distance vector onto the x and y directions
-    int xposi = planeHitP.diff(center).dot(x) + width/2;
-    int yposi = planeHitP.diff(center).dot(y) + height/2;
-    
-    Vec3 textureColor = Vec3(texture[yposi][xposi][0],
-                             texture[yposi][xposi][1],
-                             texture[yposi][xposi][2]);
-    
+    Vec3 textureColor = Vec3(0, 0, 0);
+    float texIndex = 0;
+    if (texture != NULL){
+        texIndex = 0.7;
+        // projection of distance vector onto the x and y directions
+        int xposi = planeHitP.diff(center).dot(x) + width/2;
+        int yposi = planeHitP.diff(center).dot(y) + height/2;
+        
+        textureColor = Vec3(texture[yposi][xposi][0],
+                            texture[yposi][xposi][1],
+                            texture[yposi][xposi][2]);
+    }
     // use this as default, need to add as parameters in constructor
     float Diffuse = 1.20;
     float Ambient = 0.30;
@@ -106,8 +125,8 @@ Vec3 Plane::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     
     Vec3 LAmbient = l.getAmbient().times(Ambient);
     
-    return LDiffuse.add(LSpecular).add(LAmbient).times(1.0/255.0).times(0.2).add(textureColor.times(0.8));
-
+    return LDiffuse.add(LSpecular).add(LAmbient).times(1.0/255.0).times(1-texIndex).add(textureColor.times(texIndex));
+    
 }
 
 Vec3 Plane::getN(const Vec3 &hitP, const Vec3 &d){

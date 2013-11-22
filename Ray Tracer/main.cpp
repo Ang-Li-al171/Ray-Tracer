@@ -88,7 +88,7 @@ const char* appendWithCWD(const char* fileName){
 int main(int argc, char * argv[])
 {
     
-    int objListSize = 9;
+    int objListSize = 10;
     
     // import the images used for texturing
     ImageIO** texList = new ImageIO*[objListSize];
@@ -99,14 +99,20 @@ int main(int argc, char * argv[])
     texList[3] = new ImageIO(appendWithCWD("/WallTextureTiled.ppm"));
     texList[4] = new ImageIO(appendWithCWD("/WallTexture2.ppm"));
     texList[5] = new ImageIO(appendWithCWD("/ball.ppm"));
+    texList[6] = new ImageIO(appendWithCWD("/Earth.ppm"));
     
     TObject** objectList = new TObject*[objListSize];
     
-    objectList[0] = new Sphere(Vec3(-55, 0, 50), 40, 0.0, 0.8, true);
+    // refractive ball
+    objectList[0] = new Sphere(Vec3(-55, -50, 100), 30, 0.0, 0.8, true);
+    
+    // number 8 ball
     objectList[1] = new Sphere(Vec3(150, -145, 0), 50, Vec3(0, 0, 0), Vec3(0, 0, 0),
                                0, 0,
                                texList[5]->getImage(), texList[5]->getWidth(),
                                texList[5]->getHeight(), true);
+    
+    // reflection ball in the foreground
     objectList[2] = new Sphere(Vec3(0, -150, 50), 50, 0.7, 0, true);
     
     // IMPORTANT: define x and y directions for the plane, x is rightwards, y is DOWNWARDS
@@ -146,6 +152,18 @@ int main(int argc, char * argv[])
                               texList[4]->getWidth(), texList[4]->getHeight(),
                               Vec3(0, 0, 0), Vec3(0, 0, 0),
                               0.0, 0.0, texList[4]->getImage(), false);
+    
+    // glass ball
+    objectList[9] = new Sphere(Vec3(-150, -150, -100), 50, Vec3(0, 0, 0), Vec3(0, 0, 0),
+                               0, 0,
+                               texList[6]->getImage(), texList[6]->getWidth(),
+                               texList[6]->getHeight(), true);
+    
+//    // mirror
+//    objectList[10] = new Plane(Vec3(-100, 0, 100), Vec3(0, 0, 1),
+//                              Vec3(1, 0, 0), Vec3(0, -1, 0),
+//                              150, 150,
+//                              0.9, 0.0, false);
     
     // apply ray tracing and write output image to a file
     RayTracer trial1 = RayTracer();

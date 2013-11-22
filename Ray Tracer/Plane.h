@@ -21,6 +21,8 @@ public:
           int w, int h,
           const Vec3 &sc, const Vec3 &ec, float refl, float trans,
           float*** textureImage, bool causeShadow);
+    Plane(const Vec3 &ct, const Vec3 &normal, const Vec3 &xDir, const Vec3 &yDir,
+          int w, int h, float refl, float trans, bool causeShadow);
     ~Plane(void);
     bool intersect(const Vec3 &o, const Vec3 &d, float *t);
     Vec3 getCenter(void);

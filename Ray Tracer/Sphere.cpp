@@ -81,29 +81,34 @@ Vec3 Sphere::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     //assuming the ball is always upright for now
     Vec3 hitPoint = Vec3(hitP);
     
-    Vec3 textureColor;
+    Vec3 textureColor = Vec3(0, 0, 0);
+    float texIndex = 0;
     if (texture != NULL){
-    // projection of distance vector onto the x and y directions
-    // this calculation is kinda ugly... need to fix it soon
-    int xposi = 0;
-    if (hitPoint.diff(center).getElement(2) > 0){
-        xposi = (hitPoint.diff(center).dot(Vec3(1, 0, 0))/(2.0*radius) + 1.0/2.0)*textureWidth/2.0;
-    }
-    else{
-        xposi = ((hitPoint.diff(center).dot(Vec3(1, 0, 0))/(2.0*radius) + 1.0/2.0)/2.0 + 1.0/2.0)*textureWidth;
-    }
-    int yposi = (hitPoint.diff(center).dot(Vec3(0, 1, 0))/(2.0*radius) + 1.0/2.0)*textureHeight;
-    
-    textureColor = Vec3(texture[yposi][xposi][0],
-                        texture[yposi][xposi][1],
-                        texture[yposi][xposi][2]);
+        texIndex = 0.7;
+        // projection of distance vector onto the x and y directions
+        // this calculation is kinda ugly... need to fix it soon
+        int xposi = 0;
+        if (hitPoint.diff(center).getElement(2) > 0){
+            xposi = (hitPoint.diff(center).dot(Vec3(1, 0, 0))/(2.0*radius) + 1.0/2.0)*textureWidth/2.0-1;
+        }
+        else{
+            xposi = ((hitPoint.diff(center).dot(Vec3(1, 0, 0))/(2.0*radius) + 1.0/2.0)/2.0 + 1.0/2.0)*textureWidth-1;
+        }
+        int yposi = (hitPoint.diff(center).dot(Vec3(0, -1, 0))/(2.0*radius) + 1.0/2.0)*textureHeight-1;
+        
+        if (yposi < 0)
+            yposi = 0;
+        if (xposi < 0)
+            xposi = 0;
+        textureColor = Vec3(texture[yposi][xposi][0],
+                            texture[yposi][xposi][1],
+                            texture[yposi][xposi][2]);
     }
     
     // use this as default, need to add as parameters in constructor
     float Diffuse = 1.20;
     float Ambient = 0.30;
     float Specular = 0.8;
-//    float transmission = 1;
     
     Vec3 lightSource = l.getLightSource();
     
@@ -121,11 +126,7 @@ Vec3 Sphere::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     
     Vec3 LAmbient = l.getAmbient().times(Ambient);
     
-    if (texture != NULL){
-        return LDiffuse.add(LSpecular).add(LAmbient).times(1.0/255.0).times(0.2).add(textureColor.times(0.8));
-    }else{
-        return LDiffuse.add(LSpecular).add(LAmbient).times(1.0/255.0);
-    }
+    return LDiffuse.add(LSpecular).add(LAmbient).times(1.0/255.0).times(1-texIndex).add(textureColor.times(texIndex));
     
 }
 
