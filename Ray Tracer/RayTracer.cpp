@@ -8,13 +8,14 @@
 
 #include "RayTracer.h"
 
-int MAX_RAY_DEPTH = 5;
-float*** texture_image;
+
+enum{PERSPECTIVE, ORTHOGRAPHIC};
 
 RayTracer::RayTracer(){
     width = 512;
     height = 512;
     max = 255;
+    MAX_RAY_DEPTH = 5;
     myImage = new ImageIO(width, height, max);
     // other initiation in constructor?
 }
@@ -25,6 +26,7 @@ RayTracer::~RayTracer(){
 
 Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int depth) {
     
+    // make sure d is normalized!
     d = d.unit();
     
     //take record of smallest t, for the nearest object in the direction of the ray
@@ -50,8 +52,7 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
         
         
         // color from light and surface
-        
-        Light l = Light(Vec3(181, 126, 220), Vec3(100, 100, 100),
+        Light l = Light(Vec3(255, 255, 255), Vec3(100, 100, 100),
                         Vec3(255, 255, 255) ,Vec3(100, 170, 100));
         Vec3 LightColor = hitObj->getLightAt(d, hitP, l);
 
@@ -61,7 +62,7 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
             float t0;
             if (objList[i]->intersect(hitP.add(hitObj->getN(hitP, d).times(bias)),
                                       l.getLightSource().diff(hitP), &t0)) {
-                // need a better shadowing algo for transparent objects
+                // need a better shadowing algo for transparent objects here
                 //LightColor = l.getAmbient().times(1.0/255.0).times(0.10).add(LightColor.times(objList[i]->getTrans()));
                 LightColor = l.getAmbient().times(1.0/255.0).times(0.30);
                 break;
@@ -92,9 +93,10 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
             float eta = (inside) ? 1.0/nNT : nNT;
             float cosi = n.times(-1.0).dot(d.unit());
             float cosiIn;
+            
             if ((1.0 - eta * eta * (1.0 - cosi * cosi)) >0) {
                 
-                cosiIn = sqrt(1.0 - eta * eta * (1.0 - cosi * cosi)); //this is cosi'
+                cosiIn = sqrt(1.0 - eta * eta * (1.0 - cosi * cosi));
                 
                 Vec3 originIn = hitP.diff(n.times(bias));
                 
@@ -117,7 +119,7 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
                 }
             }
             else{
-                // for debugging purposes
+                // for debugging purposes, color it red!
                 refractionColor = Vec3(255, 0, 0);
             }
         }
@@ -130,58 +132,63 @@ Vec3 RayTracer::trace(Vec3 origin, Vec3 d, TObject** objList, int size, int dept
 }
 
 
-bool RayTracer::render(int objName, const char* filePath, ImageIO* texture){
+bool RayTracer::render(int objName, const char* filePath,
+                       TObject* objectList[], int numObj,
+                       int projectionType, int depth){
     
-    texture_image = texture->getImage();
+    MAX_RAY_DEPTH = depth;
+    
     float*** image = myImage->getImage();
-    
-    // orthographical camera with 100*100 pixels
-    // shoot a ray in d=(0,0,-1) direction from each of the pixels
-    Vec3 d = Vec3(0, 0, -1);
-    
-    int objListSize = 6;
-    
-    TObject** objectList = new TObject*[objListSize];
-    
-    objectList[0] = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 0.5, 0);
-    objectList[1] = new Sphere(Vec3(-20, -150, 0), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.0, 0.8);
-    objectList[2] = new Sphere(Vec3(160, 50, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.1, 0);
-    objectList[3] = new Plane(Vec3(0, -200, 0), Vec3(0, 1, 0.1), 288*2, 288*2,
-                              Vec3(0, 0, 0), Vec3(0, 0, 0), 0.0, 0.0, texture_image);
-    objectList[4] = new Sphere(Vec3(-80, -80, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.1, 0);
-    objectList[5] = new Sphere(Vec3(120, -80, -120), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.3, 0);
-    
-    // ray trace every single pixel for the chosen type of projection
-    // this is orthographic projection
-//    for (int i=0;i<height;i++){
-//        for (int j=0;j<width;j++){
-//            Vec3 o = Vec3(j-width/2,height/2-i,0);
-//            Vec3 color = trace(o, d, objectList, objListSize, 0);
-//            
-//            image[i][j][0] = color.getElement(0);
-//            image[i][j][1] = color.getElement(1);
-//            image[i][j][2] = color.getElement(2);
-//        }
-//    }
-    
-    // this is perspective projection
-    Vec3 o = Vec3(0, -50, 200);
-    for (int i=0;i<height;i++){
-        for (int j=0;j<width;j++){
+
+    switch (projectionType) {
+        case PERSPECTIVE:{
+            // this is perspective projection
             
-            d = Vec3(j-((float)width)/2.0, ((float)height)/2.0-i, 0.0).diff(o);
+            // camera location
+            Vec3 persOrigin = Vec3(0, -50, 200);
             
-            Vec3 color = trace(o, d, objectList, objListSize, 0);
+            for (int i=0;i<height;i++){
+                for (int j=0;j<width;j++){
+                    
+                    Vec3 persDir = Vec3(j-((float)width)/2.0, ((float)height)/2.0-i, 0.0).diff(persOrigin);
+                    
+                    Vec3 color = trace(persOrigin, persDir, objectList, numObj, 0);
+                    
+                    image[i][j][0] = color.getElement(0);
+                    image[i][j][1] = color.getElement(1);
+                    image[i][j][2] = color.getElement(2);
+                }
+            }
+            break;
+        }
+        case ORTHOGRAPHIC:{
+            // ray trace every single pixel for the chosen type of projection
+            // this is orthographic projection
             
-            image[i][j][0] = color.getElement(0);
-            image[i][j][1] = color.getElement(1);
-            image[i][j][2] = color.getElement(2);
+            // orthographical camera with 100*100 pixels
+            // shoot a ray in d=(0,0,-1) direction from each of the pixels
+            Vec3 orthoDir = Vec3(0, 0, -1);
+            
+            for (int i=0;i<height;i++){
+                for (int j=0;j<width;j++){
+                    Vec3 orthoOrigin = Vec3(j-width/2,height/2-i,0);
+                    Vec3 color = trace(orthoOrigin, orthoDir, objectList, numObj, 0);
+                    
+                    image[i][j][0] = color.getElement(0);
+                    image[i][j][1] = color.getElement(1);
+                    image[i][j][2] = color.getElement(2);
+                }
+            }
+            break;
+        }
+        default:{
+            break;
         }
     }
     
     myImage->writeImage(filePath);
     
-    for (int i=0; i<objListSize; i++){
+    for (int i=0; i<numObj; i++){
         delete objectList[i];
     }
     return true;

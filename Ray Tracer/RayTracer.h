@@ -28,7 +28,9 @@ class RayTracer{
 public:
     RayTracer();
     ~RayTracer(void);
-    bool render(int objType, const char* filePath, ImageIO* texture);
+    bool render(int objName, const char* filePath,
+                TObject* objectList[], int numObj,
+                int projectionType, int depth);
     int getWidth();
     int getHeight();
     float*** getImage();
@@ -39,6 +41,7 @@ private:
     int width;
     int height;
     int max;
+    int MAX_RAY_DEPTH;
     ImageIO* myImage;
 };
 

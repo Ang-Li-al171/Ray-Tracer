@@ -98,15 +98,32 @@ int main(int argc, char * argv[])
 {
     
     // the checkerboard image used for texturing
-    ImageIO * texture = new ImageIO(appendWithCWD("/checkerboard_red.ppm"));
+    ImageIO * texture = new ImageIO(appendWithCWD("/WoodenFloor.ppm"));
+    
+    
+    int objListSize = 6;
+    
+    TObject** objectList = new TObject*[objListSize];
+    
+    objectList[0] = new Sphere(Vec3(0, 0, -150), 90, Vec3(0, 1, 0), Vec3(0, 0, 1), 1.0, 0);
+    objectList[1] = new Sphere(Vec3(-20, -150, 0), 30, Vec3(0, 0, 1), Vec3(0, 0, 1), 0.0, 0.8);
+    objectList[2] = new Sphere(Vec3(160, 50, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.1, 0);
+    objectList[3] = new Sphere(Vec3(-80, -80, -80), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.1, 0);
+    objectList[4] = new Sphere(Vec3(120, -80, -120), 50, Vec3(1, 1, 0), Vec3(0, 0, 1), 0.3, 0);
+    objectList[5] = new Plane(Vec3(0, -200, 0), Vec3(0, 1, 0.1),
+                              Vec3(1, 0, 0), Vec3(0, 0.1, -1),
+                              texture->getWidth(), texture->getHeight(),
+                              Vec3(0, 0, 0), Vec3(0, 0, 0),
+                              0.0, 0.0, texture->getImage());
     
     // apply ray tracing and write output image to a file
     RayTracer trial1 = RayTracer();
-    trial1.render(1, appendWithCWD("/testTraceSphere.ppm"), texture);
+    trial1.render(1, appendWithCWD("/testTraceSphere.ppm"), objectList, objListSize, 0, 5);
     
     // read the ray traced image back and display it
     ImageIO * the_image = new ImageIO(appendWithCWD("/testTraceSphere.ppm"));
     current_image = the_image;
+    
     
     win_height = current_image->getHeight();
     win_width = current_image->getWidth();

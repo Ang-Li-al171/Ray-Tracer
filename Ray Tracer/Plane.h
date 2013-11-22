@@ -17,7 +17,8 @@
 class Plane: public TObject{
 public:
     Plane(void);
-    Plane(const Vec3 &ct, const Vec3 &normal, int w, int h,
+    Plane(const Vec3 &ct, const Vec3 &normal, const Vec3 &xDir, const Vec3 &yDir,
+          int w, int h,
           const Vec3 &sc, const Vec3 &ec, float refl, float trans,
           float*** textureImage);
     ~Plane(void);
@@ -35,6 +36,8 @@ private:
     float*** texture;
     Vec3 center;
     Vec3 n;
+    Vec3 x;
+    Vec3 y;
     int width;
     int height;
     Vec3 surfaceColor;

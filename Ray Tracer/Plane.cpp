@@ -16,11 +16,14 @@ Plane::Plane(void){
     // empty default constructor
 }
 
-Plane::Plane(const Vec3 &ct, const Vec3 &normal, int w, int h,
+Plane::Plane(const Vec3 &ct, const Vec3 &normal, const Vec3 &xDir, const Vec3 &yDir,
+             int w, int h,
              const Vec3 &sc, const Vec3 &ec, float refl, float trans,
              float*** textureImage){
     center = Vec3(ct);
-    n = Vec3(normal);
+    n = Vec3(normal).unit();
+    x = Vec3(xDir).unit();
+    y = Vec3(yDir).unit();
     width = w;
     height = h;
     surfaceColor = Vec3(sc);
@@ -41,23 +44,21 @@ bool Plane::intersect(const Vec3 &o, const Vec3 &d, float *t){
     
     // if not parallel to the plane
     if (rayDir.dot(n) != 0) {
+        
         float tForPlaneHit = ((center.diff(rayOrigin).dot(n))/(rayDir.dot(n)));
+        
         if (tForPlaneHit > 0) {
             
             Vec3 planeHitP = rayOrigin.add(rayDir.times(tForPlaneHit));
             
+            // projection of distance vector onto the x and y directions
+            float xposi = fabs(planeHitP.diff(center).dot(x));
+            float yposi = fabs(planeHitP.diff(center).dot(y));
             
-            // this part is not very right... only works for planes with dir only in the y direction
-            int x = fabs(planeHitP.getElement(0));
-            int y = fabs(planeHitP.getElement(2));
-            if (x < width && y < height){
-                x = x%288; // need to get this info from texture_image
-                y = y%288; // need to get this info from texture_image
-                
+            if (xposi < width/2 && yposi < height/2){
                 *t = tForPlaneHit;
                 return true;
             }
-            
         }
     }
     
@@ -68,13 +69,13 @@ Vec3 Plane::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     
     Vec3 planeHitP = Vec3(hitP);
     
-    int x = fabs(planeHitP.getElement(0));
-    int y = fabs(planeHitP.getElement(2));
+    // projection of distance vector onto the x and y directions
+    int xposi = planeHitP.diff(center).dot(x) + width/2;
+    int yposi = planeHitP.diff(center).dot(y) + height/2;
     
-    x = x%288;
-    y = y%288;
-    
-    Vec3 textureColor = Vec3(texture[x][y][0], texture[x][y][1], texture[x][y][2]);
+    Vec3 textureColor = Vec3(texture[xposi][yposi][0],
+                             texture[xposi][yposi][1],
+                             texture[xposi][yposi][2]);
     
     // use this as default, need to add as parameters in constructor
     float Diffuse = 1.20;
@@ -99,7 +100,7 @@ Vec3 Plane::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     
     Vec3 LAmbient = l.getAmbient().times(Ambient);
     
-    return LDiffuse.add(LSpecular).add(LAmbient).times(1.0/255.0).times(0.5).add(textureColor.times(0.5));
+    return LDiffuse.add(LSpecular).add(LAmbient).times(1.0/255.0).times(0.2).add(textureColor.times(0.8));
 
 }
 

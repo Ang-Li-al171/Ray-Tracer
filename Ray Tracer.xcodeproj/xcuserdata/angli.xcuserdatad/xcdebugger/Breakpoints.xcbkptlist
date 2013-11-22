@@ -16,5 +16,18 @@
          landmarkName = "Sphere::getLightAt(const Vec3 &amp;d, const Vec3 &amp;hitP, Light &amp;l)"
          landmarkType = "5">
       </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "Ray Tracer/Plane.cpp"
+         timestampString = "406792822.158375"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "74"
+         endingLineNumber = "74"
+         landmarkName = "Plane::getLightAt(const Vec3 &amp;d, const Vec3 &amp;hitP, Light &amp;l)"
+         landmarkType = "5">
+      </FileBreakpoint>
    </FileBreakpoints>
 </Bucket>
