@@ -91,33 +91,37 @@ int main(int argc, char * argv[])
     int objListSize = 10;
     
     // import the images used for texturing
+    
     ImageIO** texList = new ImageIO*[objListSize];
-    texList[0] = new ImageIO(appendWithCWD("/WoodenFloor.ppm"));
-    texList[1] = new ImageIO(appendWithCWD("/RoomBG.ppm"));
+    texList[0] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/WoodenFloor.ppm");
+    texList[1] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/RoomBG.ppm");
     texList[1] = texList[1]->scale(1.5, 1.5);
-    texList[2] = new ImageIO(appendWithCWD("/RoomFront2.ppm"));
-    texList[3] = new ImageIO(appendWithCWD("/WallTextureTiled.ppm"));
-    texList[4] = new ImageIO(appendWithCWD("/WallTexture2.ppm"));
-    texList[5] = new ImageIO(appendWithCWD("/ball.ppm"));
-    texList[6] = new ImageIO(appendWithCWD("/Earth.ppm"));
+    texList[2] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/RoomFront2.ppm");
+    texList[3] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/WallTextureTiled.ppm");
+    texList[4] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/WallTexture2.ppm");
+    texList[5] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/ball.ppm");
+    texList[6] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/Earth.ppm");
     
     TObject** objectList = new TObject*[objListSize];
     
-    // refractive ball
-    objectList[0] = new Sphere(Vec3(-55, -50, 100), 30, 0.0, 0.8, true);
+      // refractive ball
+      objectList[0] = new Sphere(Vec3(-55, -50, 100), 30, 0.0, 0.8, true);
     
-    // number 8 ball
-    objectList[1] = new Sphere(Vec3(150, -145, 0), 50, Vec3(0, 0, 0), Vec3(0, 0, 0),
-                               0, 0,
-                               texList[5]->getImage(), texList[5]->getWidth(),
-                               texList[5]->getHeight(), true);
+//    // number 8 ball
+//    objectList[1] = new Sphere(Vec3(150, -145, 0), 50, Vec3(0, 0, 0), Vec3(0, 0, 0),
+//                               0, 0,
+//                               texList[5]->getImage(), texList[5]->getWidth(),
+//                               texList[5]->getHeight(), true);
+//
     
+    objectList[1] = new Cylinder(Vec3(80, -70, 50), 50, 90, Vec3(0, 1, 1), 0, 0, true);
+
     // reflection ball in the foreground
-    objectList[2] = new Sphere(Vec3(0, -150, 50), 50, 0.7, 0, true);
+    objectList[2] = new Sphere(Vec3(-50, -150, 50), 50, 0.7, 0, true);
     
     // IMPORTANT: define x and y directions for the plane, x is rightwards, y is DOWNWARDS
     //room front
-    objectList[3] = new Plane(Vec3(0, texList[2]->getHeight()/2-200,200), Vec3(0, 0, -1),
+    objectList[3] = new Plane(Vec3(0, texList[2]->getHeight()/2-200,700), Vec3(0, 0, -1),
                               Vec3(-1, 0, 0), Vec3(0, -1, 0),
                               texList[2]->getWidth(), texList[2]->getHeight(),
                               Vec3(0, 0, 0), Vec3(0, 0, 0),
@@ -167,10 +171,10 @@ int main(int argc, char * argv[])
     
     // apply ray tracing and write output image to a file
     RayTracer trial1 = RayTracer();
-    trial1.render(1, appendWithCWD("/testTraceSphere.ppm"), objectList, objListSize, 0, 5);
+    trial1.render(1, "/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/testTraceSphere.ppm", objectList, objListSize, 0, 5);
     
     // read the ray traced image back and display it
-    ImageIO * the_image = new ImageIO(appendWithCWD("/testTraceSphere.ppm"));
+    ImageIO * the_image = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/testTraceSphere.ppm");
     current_image = the_image;
     
     

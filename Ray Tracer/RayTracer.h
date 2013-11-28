@@ -14,6 +14,7 @@
 #include "Sphere.h"
 #include "RayTracer.h"
 #include "Sphere.h"
+#include "Cylinder.h"
 #include "Plane.h"
 #include "Light.h"
 #include <stdio.h>

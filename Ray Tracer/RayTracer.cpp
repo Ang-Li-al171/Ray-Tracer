@@ -144,7 +144,7 @@ bool RayTracer::render(int objName, const char* filePath,
             // this is perspective projection
             
             // camera location
-            Vec3 persOrigin = Vec3(0, -100, 200);
+            Vec3 persOrigin = Vec3(0, -100, 400);
             
             for (int i=0;i<height;i++){
                 for (int j=0;j<width;j++){
