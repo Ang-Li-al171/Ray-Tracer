@@ -27,6 +27,8 @@ Cylinder::Cylinder(const Vec3 &c, int r, int h, const Vec3 &ad, float refl, floa
     reflection = refl;
     transparency = trans;
     centerUp = center.add(axisDirection.times(height));
+    objectList[0] = new PlaneCircle(center, axisDirection.times(-1), radius, reflection, transparency, shadow);
+    objectList[1] = new PlaneCircle(centerUp, axisDirection, radius, reflection, transparency, shadow);
 }
 
 Cylinder::Cylinder(const Vec3 &c, int r, int h, const Vec3 &ad, const Vec3 &sc,
@@ -44,6 +46,8 @@ Cylinder::Cylinder(const Vec3 &c, int r, int h, const Vec3 &ad, const Vec3 &sc,
     emissionColor = Vec3(ec);
     reflection = refl;
     transparency = trans;
+    objectList[0] = new PlaneCircle(center, axisDirection.times(-1), radius, reflection, transparency, shadow);
+    objectList[1] = new PlaneCircle(centerUp, axisDirection, radius, reflection, transparency, shadow);
 }
 
 Cylinder::~Cylinder(){
@@ -57,41 +61,59 @@ bool Cylinder::causeShadow(){
 bool Cylinder::intersect(const Vec3 &o, const Vec3 &d, float *t){
     Vec3 dd = Vec3(d).unit();
     Vec3 oo = Vec3(o);
-    Vec3 oTemp = oo.diff(axisDirection.unit().times(axisDirection.unit().dot(oo)));
-    Vec3 dTemp = dd.diff(axisDirection.unit().times(axisDirection.unit().dot(dd)));
-    Vec3 oCylinderTemp = center.diff(axisDirection.unit().times(axisDirection.unit().dot(center)));
-
-    float a = dTemp.dot(dTemp);
-    float b = oTemp.dot(dTemp)*2 - dTemp.dot(oCylinderTemp)*2;
-    float c = oTemp.dot(oTemp) - oTemp.dot(oCylinderTemp)*2 + oCylinderTemp.dot(oCylinderTemp) - radius*radius;
     
-    float delta = b*b - 4*a*c;
-    Vec3 ooCynlinderTemp = oo.diff(oCylinderTemp);
-    
-    if (delta < 0) {
-        return false;
-    } else {
-        float tFinal = 0;
-        float t1 = (-b-sqrt(delta))/(2*a);
-        float t2 = (-b+sqrt(delta))/(2*a);
-        if (t1 < 0 && t2 < 0) return false;
-        else {
-            if (t1>0) tFinal = t1;
-            else tFinal = t2;
-            Vec3 hitP = oo.add(dd.times(tFinal));
-            Vec3 pc = hitP.diff(center);
-            Vec3 pcProjected = axisDirection.unit().times(pc.dot(axisDirection.unit()));
-            if (pcProjected.dot(axisDirection.unit()) > 0 && pcProjected.length() <= height) {
-                *t = tFinal;
-                return true;
-            } else {
-                return false;
+    float tHit = INFINITY;
+    float tNear = INFINITY;
+    TObject* hitObj;
+    for (int i = 0; i<2; i++) {
+        if (objectList[i]->intersect(oo, dd, &tHit)) {
+            if (tHit < tNear){
+                tNear = tHit;
+                hitObj = objectList[i];
             }
-            
         }
-        
     }
     
+    if (tHit != INFINITY) {
+        *t = tHit;
+        return true;
+    }
+    return false;
+
+    
+    
+//    Vec3 oTemp = oo.diff(axisDirection.unit().times(axisDirection.unit().dot(oo)));
+//    Vec3 dTemp = dd.diff(axisDirection.unit().times(axisDirection.unit().dot(dd)));
+//    Vec3 oCylinderTemp = center.diff(axisDirection.unit().times(axisDirection.unit().dot(center)));
+//
+//    float a = dTemp.dot(dTemp);
+//    float b = oTemp.dot(dTemp)*2 - dTemp.dot(oCylinderTemp)*2;
+//    float c = oTemp.dot(oTemp) - oTemp.dot(oCylinderTemp)*2 + oCylinderTemp.dot(oCylinderTemp) - radius*radius;
+//    
+//    float delta = b*b - 4*a*c;
+//    Vec3 ooCynlinderTemp = oo.diff(oCylinderTemp);
+//    
+//    if (delta < 0) {
+//        return false;
+//    } else {
+//        float tFinal = 0;
+//        float t1 = (-b-sqrt(delta))/(2*a);
+//        float t2 = (-b+sqrt(delta))/(2*a);
+//        if (t1 < 0 && t2 < 0) return false;
+//        else {
+//            if (t1>0) tFinal = t1;
+//            else tFinal = t2;
+//            Vec3 hitP = oo.add(dd.times(tFinal));
+//            Vec3 pc = hitP.diff(center);
+//            Vec3 pcProjected = axisDirection.unit().times(pc.dot(axisDirection.unit()));
+//            if (pcProjected.dot(axisDirection.unit()) > 0 && pcProjected.length() <= height) {
+//                *t = tFinal;
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        }
+//    }
 }
 
 //TODO

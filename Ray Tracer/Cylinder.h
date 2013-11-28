@@ -14,6 +14,7 @@
 #include "Light.h"
 #include <math.h>
 #include "Sphere.h"
+#include "PlaneCircle.h"
 
 
 using namespace std;
@@ -39,6 +40,7 @@ public:
     bool causeShadow();
     
 private:
+    TObject** objectList = new TObject*[2];
     Vec3 center;
     Vec3 centerUp;
     float*** texture;
