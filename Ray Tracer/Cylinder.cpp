@@ -34,11 +34,8 @@ Cylinder::Cylinder(const Vec3 &c, int r, int h, const Vec3 &ad, float refl, floa
 
 Cylinder::Cylinder(const Vec3 &c, int r, int h, const Vec3 &ad, const Vec3 &sc,
                const Vec3 &ec, float refl, float trans,
-               float*** tex, int texW, int texH, bool shadow) {
+               Texture* tex, bool shadow) {
     texture = tex;
-    textureWidth = texW;
-    textureHeight = texH;
-    printf("width: %d  height: %d", textureWidth, textureHeight);
     causeShadowBool = shadow;
     center = Vec3(c);
     radius = r;
@@ -131,42 +128,24 @@ Vec3 Cylinder::getLightAt(const Vec3 &d, const Vec3 &hitP, Light &l){
     float texIndex = 0;
     
     //TODO Texture
-    if (texture != NULL){
+    if (!texture->getInvalid()){
         texIndex = 0.7;
         
-//        Vec3 y = axisDirection;
-//        Vec3 t = Vec3(0, 0, 1);
-//        if (y.dot(t) == 1) {
-//            t = Vec3(0, 1, 0);
-//        }
-//        Vec3 temp = t.cross(y);
-//        Vec3 z = (t.cross(y)).times(1/temp.length());
-//        Vec3 x = z.cross(y);
-//        
-//        //hit point for a cylinder with z axis as axisDirection
-//        Vec3 hitPointAdjusted = x.times(hitPoint.getElement(0)).add(y.times(hitPoint.getElement(1))).add(z.times(hitPoint.getElement(2)));
-//        Vec3 centerUpAdjused = x.times(centerUp.getElement(0)).add(y.times(centerUp.getElement(1))).add(z.times(centerUp.getElement(2)));
         
         if (hitPoint.diff(center).length() < radius || hitPoint.diff(centerUp).length()<radius) {
             //one of the caps
-            int u = (radius + hitPoint.getElement(0) - center.getElement(0)) * (textureWidth-1) / (2 * radius);
-            int v = (radius + hitPoint.getElement(2) - center.getElement(2)) * (textureHeight-1) / (2 * radius);
-            textureColor = Vec3(texture[v][u][0],
-                                texture[v][u][1],
-                                texture[v][u][2]);
+            float u = (radius + hitPoint.getElement(0) - center.getElement(0))/ (float)(2 * radius);
+            float v = (radius + hitPoint.getElement(2) - center.getElement(2))/(float) (2 * radius);
+            textureColor = texture->getColor(u, v);
             
         } else {
             //not on caps
-            int v = (hitPoint.getElement(1) - centerUp.getElement(1)) * (textureHeight-1) / height;
-            printf(" v: %d ", v);
-            int u = acos(hitPoint.getElement(0) / radius) * (textureWidth-1)/ (2*PI);
-            printf(" u: %d ", u);
+            float u = acos(hitPoint.getElement(0) / (float) radius)/ (2*PI);
+            float v = (hitPoint.getElement(1) - centerUp.getElement(1)) / (float) height;
             
             if (u < 0) u = 0;
             
-            textureColor = Vec3(texture[v][u][0],
-                                texture[v][u][1],
-                                texture[v][u][2]);
+            textureColor = texture->getColor(u, v);
         }
     }
     

@@ -14,6 +14,7 @@
 #include "Light.h"
 #include <math.h>
 #include "Sphere.h"
+#include "Texture.h"
 #include "PlaneCircle.h"
 
 
@@ -26,7 +27,7 @@ public:
            bool shadow);
     Cylinder(const Vec3 &c, int r, int h, const Vec3 &ad, const Vec3 &sc, const Vec3 &ec,
            float refl, float trans,
-           float*** tex, int texW, int texH, bool shadow);
+           Texture* tex, bool shadow);
     ~Cylinder(void);
     bool intersect(const Vec3 &o, const Vec3 &d, float *t);
     Vec3 getCenter(void);
@@ -43,13 +44,11 @@ private:
     TObject** objectList = new TObject*[2];
     Vec3 center;
     Vec3 centerUp;
-    float*** texture;
+    Texture* texture;
     int radius;
     int height;
     Vec3 axisDirection;
     bool causeShadowBool;
-    int textureHeight;
-    int textureWidth;
     Vec3 surfaceColor;
     Vec3 emissionColor;
     float reflection;

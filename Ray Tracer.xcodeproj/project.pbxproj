@@ -10,6 +10,7 @@
 		4B6CBF631846C47A0063690A /* Cylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B6CBF611846C47A0063690A /* Cylinder.cpp */; };
 		4B6CBF691847112B0063690A /* PlaneCircle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B6CBF671847112B0063690A /* PlaneCircle.cpp */; };
 		4B8BDBA31834825000E0FB27 /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B8BDBA11834825000E0FB27 /* Sphere.cpp */; };
+		4BCC9C9A1850F7EF00543B0B /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC9C981850F7EF00543B0B /* Texture.cpp */; };
 		BC0426E6182D395000DE3B1A /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0426E4182D395000DE3B1A /* Light.cpp */; };
 		BCB12DC318235EAC00C0B07F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB12DC218235EAC00C0B07F /* main.cpp */; };
 		BCB12DC518235EAC00C0B07F /* Ray_Tracer.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCB12DC418235EAC00C0B07F /* Ray_Tracer.1 */; };
@@ -42,6 +43,8 @@
 		4B6CBF681847112B0063690A /* PlaneCircle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaneCircle.h; path = ../PlaneCircle.h; sourceTree = "<group>"; };
 		4B8BDBA11834825000E0FB27 /* Sphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sphere.cpp; sourceTree = "<group>"; };
 		4B8BDBA21834825000E0FB27 /* Sphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere.h; sourceTree = "<group>"; };
+		4BCC9C981850F7EF00543B0B /* Texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Texture.cpp; sourceTree = "<group>"; };
+		4BCC9C991850F7EF00543B0B /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
 		BC0426E4182D395000DE3B1A /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Light.cpp; sourceTree = "<group>"; };
 		BC0426E5182D395000DE3B1A /* Light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Light.h; sourceTree = "<group>"; };
 		BCB12DBF18235EAC00C0B07F /* Ray Tracer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Ray Tracer"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,6 +105,8 @@
 				BCB12DD41823636700C0B07F /* ImageIO.cpp */,
 				BCB12DD51823636700C0B07F /* ImageIO.h */,
 				BCB12DC218235EAC00C0B07F /* main.cpp */,
+				4BCC9C981850F7EF00543B0B /* Texture.cpp */,
+				4BCC9C991850F7EF00543B0B /* Texture.h */,
 				4B8BDBA11834825000E0FB27 /* Sphere.cpp */,
 				4B8BDBA21834825000E0FB27 /* Sphere.h */,
 				4B6CBF611846C47A0063690A /* Cylinder.cpp */,
@@ -180,6 +185,7 @@
 				BCB12DDE182368EF00C0B07F /* Vec3.cpp in Sources */,
 				BC0426E6182D395000DE3B1A /* Light.cpp in Sources */,
 				BCF141BC183C485E00D25EE0 /* Plane.cpp in Sources */,
+				4BCC9C9A1850F7EF00543B0B /* Texture.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
