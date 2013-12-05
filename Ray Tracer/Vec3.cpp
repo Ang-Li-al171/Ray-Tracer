@@ -62,6 +62,8 @@ Vec3 Vec3::unit(){
 }
 
 Vec3 Vec3::cross(Vec3 v){
+    return Vec3(getElement(1)*v.getElement(2) - v.getElement(1)*getElement(2), getElement(2)*v.getElement(0) - v.getElement(2)*getElement(0),getElement(0)*v.getElement(1) - v.getElement(0)*getElement(1));
+    
     //haven't implemented yet
     return Vec3(0,0,0);
 }

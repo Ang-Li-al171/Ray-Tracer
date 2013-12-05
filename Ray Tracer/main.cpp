@@ -114,7 +114,7 @@ int main(int argc, char * argv[])
 //                               texList[5]->getHeight(), true);
 //
     
-    objectList[1] = new Cylinder(Vec3(80, -70, 50), 50, 90, Vec3(0, 1, 0), 0, 0, true);
+    objectList[1] = new Cylinder(Vec3(0, 0, 0), 50, 90, Vec3(0, 1, 0), Vec3(0, 0, 0), Vec3(0, 0, 0),0, 0,texList[6]->getImage(), texList[6]->getWidth(), texList[6]->getHeight(), true);
 
     // reflection ball in the foreground
     objectList[2] = new Sphere(Vec3(-50, -150, 50), 50, 0.7, 0, true);
