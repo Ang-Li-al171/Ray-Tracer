@@ -7,13 +7,39 @@
          shouldBeEnabled = "Yes"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "Ray Tracer/Plane.cpp"
-         timestampString = "406829767.118393"
+         filePath = "Ray Tracer/RayTracer.cpp"
+         timestampString = "408708412.286036"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "99"
-         endingLineNumber = "99"
-         landmarkName = "Plane::getLightAt(const Vec3 &amp;d, const Vec3 &amp;hitP, Light &amp;l)"
+         startingLineNumber = "208"
+         endingLineNumber = "208"
+         landmarkName = "RayTracer::render(int objName, Vec3 eyeLocation, const char* filePath, TObject* objectList[], int numObj, int projectionType, int depth, int depthOfField, bool antiAliasing)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "Ray Tracer/ImageIO.cpp"
+         timestampString = "408706412.6007"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "116"
+         endingLineNumber = "116"
+         landmarkName = "ImageIO::blur(Filter *f, bool** dummy)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "Ray Tracer/ImageIO.cpp"
+         timestampString = "408706412.6007"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "110"
+         endingLineNumber = "110"
+         landmarkName = "ImageIO::blur(Filter *f, bool** dummy)"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

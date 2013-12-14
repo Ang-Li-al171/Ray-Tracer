@@ -29,13 +29,14 @@ class RayTracer{
 public:
     RayTracer();
     ~RayTracer(void);
-    bool render(int objName, const char* filePath,
+    bool render(int objName, Vec3 eyeLocation, const char* filePath,
                 TObject* objectList[], int numObj,
-                int projectionType, int depth);
+                int projectionType, int depth, int depthOfField,
+                bool antiAliasing);
     int getWidth();
     int getHeight();
     float*** getImage();
-    Vec3 trace(Vec3 origin, Vec3 d, TObject** sphereList, int size, int depth);
+    Vec3 trace(Vec3 origin, Vec3 d, TObject** sphereList, int size, int depth, int* outSideT);
     
 private:
     //char magic_number[2];

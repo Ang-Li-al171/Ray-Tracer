@@ -18,9 +18,12 @@ ImageIO::ImageIO(int w, int h, int m){
     height = h;
     max = m;
     image = new float**[height];
+    applyFilter = new bool*[height];
     for(int i = 0; i < height; i++){
+        applyFilter[i] = new bool[width];
         image[i] = new float*[width];
         for(int j = 0; j < width; j++){
+            applyFilter[i][j]=true;
             image[i][j] = new float[3];
             image[i][j][0] = 0;
             image[i][j][1] = 0;
@@ -80,6 +83,10 @@ ImageIO::ImageIO(const char* file_name){
     imageDisplayArray = NULL;
 }
 
+bool** ImageIO::getApplyFilter(){
+    return applyFilter;
+}
+
 ImageIO::~ImageIO(void){
     for(int i = 0; i < height; i++){
         for(int j = 0; j < width; j++){
@@ -90,6 +97,58 @@ ImageIO::~ImageIO(void){
     delete [] image;
     
     delete [] imageDisplayArray;
+}
+
+ImageIO* ImageIO::blur(Filter *f, bool** dummy){
+    
+    ImageIO* extendedImage = extendEdge(this, f->getR());
+    ImageIO* blurredHorizontal = new ImageIO(width, height, max);
+    float*** extended = extendedImage->image;
+    float*** blurredH = blurredHorizontal->image;
+    double* filterArray = f->getFilterArray();
+    int r = f->getR();
+    
+    // apply the filter horizontally first
+    for (int i=0;i<height;i++){
+        for (int j=0;j<width;j++){
+            if (applyFilter[i][j]){
+                for (int k=0;k<2*r+1;k++){
+                    blurredH[i][j][0] += extended[i+r][j+k][0] * filterArray[k];
+                    blurredH[i][j][1] += extended[i+r][j+k][1] * filterArray[k];
+                    blurredH[i][j][2] += extended[i+r][j+k][2] * filterArray[k];
+                }
+            }
+            else{
+                blurredH[i][j][0] += extended[i+r][j+r][0];
+                blurredH[i][j][1] += extended[i+r][j+r][1];
+                blurredH[i][j][2] += extended[i+r][j+r][2];
+            }
+        }
+    }
+    
+    extendedImage = extendEdge(blurredHorizontal, f->getR());
+    extended = extendedImage->image;
+    ImageIO* blurredBoth = new ImageIO(width, height, max);
+    float*** blurredB = blurredBoth->image;
+    // apply the filter vertically
+    for (int i=0;i<height;i++){
+        for (int j=0;j<width;j++){
+            
+            if (applyFilter[height][width]){
+                for (int k=0;k<2*r+1;k++){
+                    blurredB[i][j][0] += extended[i+k][j+r][0] * filterArray[k];
+                    blurredB[i][j][1] += extended[i+k][j+r][1] * filterArray[k];
+                    blurredB[i][j][2] += extended[i+k][j+r][2] * filterArray[k];
+                }
+            }
+            else{
+                blurredB[i][j][0] += extended[i+r][j+r][0];
+                blurredB[i][j][1] += extended[i+r][j+r][1];
+                blurredB[i][j][2] += extended[i+r][j+r][2];
+            }
+        }
+    }
+    return blurredBoth;
 }
 
 // apply the given filter with the original image
@@ -132,6 +191,7 @@ ImageIO* ImageIO::blur(Filter* f){
 
 // extend the original image in all four directions by r pixels, preparing for convolution
 ImageIO* ImageIO::extendEdge(ImageIO* imageToExtend, int r){
+    
     ImageIO* extendedImage = new ImageIO(width+2*r, height+2*r, max);
     float*** original = imageToExtend->image;
     float*** extended = extendedImage->image;

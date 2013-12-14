@@ -32,8 +32,10 @@ public:
     ImageIO* removeBlue();
     ImageIO* grayScale();
     ImageIO* combineWith(ImageIO* otherPic, int posX, int posY);
+    ImageIO* blur(Filter* f, bool** applyFilter);
     ImageIO* blur(Filter* f);
     ImageIO* extendEdge(ImageIO* imageToExtend,int r);
+    bool** getApplyFilter();
 
 private:
     char magic_number[2];
@@ -42,7 +44,7 @@ private:
     int max;
     float*** image;
     float* imageDisplayArray;
-
+    bool** applyFilter;
 };
 
 #endif /* defined(__Resolution__ImageIO__) */

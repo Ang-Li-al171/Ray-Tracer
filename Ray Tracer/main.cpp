@@ -38,14 +38,14 @@ void idle( void ){
 }
 
 void drawImage( void ){
-
+    
     if(current_image != NULL){
         glClear(GL_COLOR_BUFFER_BIT);
         glRasterPos2i(0, 0);
         glDrawPixels(current_image->getWidth(), current_image->getHeight(), GL_RGB,
                      GL_FLOAT, current_image->getImageDisplayArray());
     }
-
+    
 }
 
 void display( void )
@@ -89,95 +89,103 @@ const char* appendWithCWD(const char* fileName){
 int main(int argc, char * argv[])
 {
     
-    int objListSize = 10;
+    // start reading data in from a file
+    FILE* file;
+    int projectionType = 1;
+    file = fopen(appendWithCWD("/dataIn.txt"), "r");
+    if(!file){
+        fprintf(stderr, "Unable to open file %s", appendWithCWD("/dataIn.txt"));
+        exit(1);
+    }
     
-    // import the images used for texturing
+    // read in objection type and 
+    char buff[32];
+    int x=0, y=0, z=0;
+    fscanf(file, "%s", buff);
+    if (strcmp(buff, "Perspective") == 0){
+        projectionType = 0;
+        fscanf(file, "%d %d %d", &x, &y, &z);
+    }
     
-    ImageIO** texList = new ImageIO*[objListSize];
-    texList[0] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/WoodenFloor.ppm");
-    texList[1] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/RoomBG.ppm");
-    texList[1] = texList[1]->scale(1.5, 1.5);
-    texList[2] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/RoomFront2.ppm");
-    texList[3] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/WallTextureTiled.ppm");
-    texList[4] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/WallTexture2.ppm");
-    texList[5] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/ball.ppm");
-    texList[6] = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/Earth.ppm");
+    Vec3 eyeLocation = Vec3(x, y, z);
+    
+    // size of list of objects
+    int objListSize = 0;
+    fscanf(file, "%d", &objListSize);
     
     TObject** objectList = new TObject*[objListSize];
+    ImageIO** texList = new ImageIO*[objListSize];
+    int index = 0;
     
-      // refractive ball
-      objectList[0] = new Sphere(Vec3(-55, -50, 100), 30, 0.0, 0.8, true);
+    // each line for an object from now on
+    while(index < objListSize){
+        char objName[32];
+        fscanf(file, "%s", objName);
+        
+        if (strcmp(objName, "Sphere") == 0){
+            int ca, cb, cc, r, shadow;
+            float refl, refr;
+            char texName[32];
+            fscanf(file, "%d %d %d %d %f %f %s %d",
+                   &ca, &cb, &cc, &r, &refl, &refr, texName, &shadow);
+            
+            bool shadowB = shadow == 1 ? true: false;
+            texList[index] = new ImageIO(appendWithCWD(texName));
+            objectList[index] = new Sphere(Vec3(ca, cb, cc), r, Vec3(0,0,0), Vec3(0,0,0),
+                                           refl, refr, texList[index]->getImage(),
+                                           texList[index]->getWidth(), texList[index]->getHeight(),
+                                           shadowB);
+        }
+        
+        else if (strcmp(objName, "Plane") == 0){
+            int ca, cb, cc, na, nb, nc, xa, xb, xc, ya, yb, yc, shadow;
+            float refl, refr;
+            char texName[32];
+            
+            fscanf(file, "%d %d %d %d %d %d %d %d %d %d %d %d %f %f %s %d",
+                   &ca, &cb, &cc, &na, &nb, &nc, &xa, &xb, &xc,
+                   &ya, &yb, &yc, &refl, &refr, texName, &shadow);
+            bool shadowB = shadow == 1 ? true: false;
+            
+            texList[index] = new ImageIO(appendWithCWD(texName));
+            objectList[index] = new Plane(Vec3(ca, cb, cc), Vec3(na, nb, nc),
+                                          Vec3(xa, xb, xc), Vec3(ya, yb, yc),
+                                          texList[index]->getWidth(), texList[index]->getHeight(),
+                                          Vec3(0, 0, 0), Vec3(0, 0, 0),
+                                          refl, refr, texList[index]->getImage(),
+                                          shadowB);
+        }
+        
+        else if (strcmp(objName, "Cylinder") == 0){
+            int ca, cb, cc, r, h, da, db, dc, shadow;
+            float refl, refr;
+            char texName[32];
+            fscanf(file, "%d %d %d %d %d %d %d %d %f %f %s %d", &ca, &cb, &cc, &r, &h, &da, &db, &dc, &refl, & refr, texName, &shadow);
+            bool shadowB = shadow == 1 ? true: false;
+            
+            texList[index] = new ImageIO(appendWithCWD(texName));
+            objectList[index] = new Cylinder(Vec3(ca, cb, cc), r, h, Vec3(da, db, dc),
+                                             Vec3(0, 0, 0), Vec3(0, 0, 0),
+                                             refl, refr, new Texture(texList[index]),
+                                             shadowB);
+        }
+        
+        index++;
+        memset(objName, 0, 32);
+    }
     
-//    // number 8 ball
-//    objectList[1] = new Sphere(Vec3(150, -145, 0), 50, Vec3(0, 0, 0), Vec3(0, 0, 0),
-//                               0, 0,
-//                               texList[5]->getImage(), texList[5]->getWidth(),
-//                               texList[5]->getHeight(), true);
-//
-    Texture* tex = new Texture(texList[6]);
-    objectList[1] = new Cylinder(Vec3(0, 0, 0), 50, 90, Vec3(0, 1, 0), Vec3(0, 0, 0), Vec3(0, 0, 0),0, 0, tex, true);
-
-    // reflection ball in the foreground
-    objectList[2] = new Sphere(Vec3(-50, -150, 50), 50, 0.7, 0, true);
-    
-    // IMPORTANT: define x and y directions for the plane, x is rightwards, y is DOWNWARDS
-    //room front
-    objectList[3] = new Plane(Vec3(0, texList[2]->getHeight()/2-200,700), Vec3(0, 0, -1),
-                              Vec3(-1, 0, 0), Vec3(0, -1, 0),
-                              texList[2]->getWidth(), texList[2]->getHeight(),
-                              Vec3(0, 0, 0), Vec3(0, 0, 0),
-                              0.0, 0.0, texList[2]->getImage(), false);
-    //wooden floor
-    objectList[4] = new Plane(Vec3(0, -200, 0), Vec3(0, 1, 0),
-                              Vec3(1, 0, 0), Vec3(0, 0, 1),
-                              texList[0]->getWidth(), texList[0]->getHeight(),
-                              Vec3(0, 0, 0), Vec3(0, 0, 0),
-                              0.0, 0.0, texList[0]->getImage(), false);
-    //roomBG
-    objectList[5] = new Plane(Vec3(0, texList[1]->getHeight()/2-200, -350), Vec3(0, 0, 1),
-                              Vec3(1, 0, 0), Vec3(0, -1, 0),
-                              texList[1]->getWidth(), texList[1]->getHeight(),
-                              Vec3(0, 0, 0), Vec3(0, 0, 0),
-                              0.0, 0.0, texList[1]->getImage(), false);
-    //leftWall
-    objectList[6] = new Plane(Vec3(-400, texList[3]->getHeight()/2-200, 0), Vec3(1, 0, 0),
-                              Vec3(0, 0, -1), Vec3(0, -1, 0),
-                              texList[3]->getWidth(), texList[3]->getHeight(),
-                              Vec3(0, 0, 0), Vec3(0, 0, 0),
-                              0.0, 0.0, texList[3]->getImage(), false);
-    //rightWall
-    objectList[7] = new Plane(Vec3(400, texList[3]->getHeight()/2-200, 0), Vec3(-1, 0, 0),
-                              Vec3(0, 0, 1), Vec3(0, -1, 0),
-                              texList[3]->getWidth(), texList[3]->getHeight(),
-                              Vec3(0, 0, 0), Vec3(0, 0, 0),
-                              0.0, 0.0, texList[3]->getImage(), false);
-    //roof
-    objectList[8] = new Plane(Vec3(0, texList[1]->getHeight(), 0), Vec3(0, -1, 0),
-                              Vec3(1, 0, 0), Vec3(0, 0, -1),
-                              texList[4]->getWidth(), texList[4]->getHeight(),
-                              Vec3(0, 0, 0), Vec3(0, 0, 0),
-                              0.0, 0.0, texList[4]->getImage(), false);
-    
-    // glass ball
-    objectList[9] = new Sphere(Vec3(-150, -150, -100), 50, Vec3(0, 0, 0), Vec3(0, 0, 0),
-                               0, 0,
-                               texList[6]->getImage(), texList[6]->getWidth(),
-                               texList[6]->getHeight(), true);
-    
-//    // mirror
-//    objectList[10] = new Plane(Vec3(-100, 0, 100), Vec3(0, 0, 1),
-//                              Vec3(1, 0, 0), Vec3(0, -1, 0),
-//                              150, 150,
-//                              0.9, 0.0, false);
+    fclose(file);
     
     // apply ray tracing and write output image to a file
-    RayTracer trial1 = RayTracer();
-    trial1.render(1, "/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/testTraceSphere.ppm", objectList, objListSize, 0, 5);
+    RayTracer* trial1 = new RayTracer();
+    trial1->render(projectionType, eyeLocation,
+                   appendWithCWD("/TracedImage.ppm"),
+                   objectList, objListSize,
+                   0, 5, 400, true);
     
     // read the ray traced image back and display it
-    ImageIO * the_image = new ImageIO("/Users/Sherry/Desktop/Academics/Compsci 344/Final Project/Ray-Tracer/DerivedData/Ray Tracer/Build/Products/Debug/testTraceSphere.ppm");
+    ImageIO * the_image = new ImageIO(appendWithCWD("/TracedImage.ppm"));
     current_image = the_image;
-    
     
     win_height = current_image->getHeight();
     win_width = current_image->getWidth();
@@ -205,6 +213,6 @@ int main(int argc, char * argv[])
         delete objectList[i];
         delete texList[i];
     }
-    
+    delete trial1;
     return 0;
 }
